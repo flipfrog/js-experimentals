@@ -1,2 +1,2 @@
-# js-roids
-Shooting Game Roids
+# js-experimentals
+Miscellaouse JS codes.
