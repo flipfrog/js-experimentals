@@ -1,2 +1,6 @@
 # js-experimentals
-Miscellaouse JS codes.
+Miscellaneous JS codes.
+
+### updateCanvasFrame/index.html
+- updating canvas on refresh cycles.
+
