@@ -1,0 +1,64 @@
+<html>
+<body>
+<h4>
+    Loading images Test.
+</h4>
+<div>
+    <canvas id="canvas_1" width="600" height="600"></canvas>
+</div>
+</body>
+<script src="../js/jquery.min.js"></script>
+<script>
+    $(function(){
+        const canvas = document.getElementById('canvas_1');
+        const ctx = canvas.getContext('2d');
+
+        // load images and start updating frame
+        const imgPromise1 = loadImage('img/pengo_1.png');
+        const imgPromise2 = loadImage('img/pengo_2.png');
+        Promise.all([imgPromise1, imgPromise2])
+            .then(images => {
+                [img1, img2] = images;
+                console.log(`img1: w,h=(${img1.width},${img1.height})`);
+                console.log(`img2: w,h=(${img2.width},${img2.height})`);
+                // start updating canvas frame
+                requestAnimationFrame(drawFrame);
+            });
+
+        // loading image
+        async function loadImage(imagePath) {
+            return new Promise(resolve => {
+                const image = new Image();
+                image.addEventListener('load', () => {
+                    resolve({image: image, width: image.width, height: image.height});
+                });
+                image.src = imagePath;
+            });
+        }
+
+        // draw frame which calls canvas-update function
+        let lastMilliSec = null;
+        let img1 = null, img2 = null;
+        function drawFrame(currentTime) {
+            const currentMilliSec = currentTime/1000;
+            const delta = lastMilliSec ? currentMilliSec - lastMilliSec : 0;
+            lastMilliSec = currentMilliSec;
+            update(delta);
+            requestAnimationFrame(drawFrame);
+        }
+
+        // update canvas
+        let x = 0, y = 50;
+        const pps = 20; // speed px/sec
+        function update(delta) {
+            x = (x + delta * pps) % canvas.width;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (img1 && img2) {
+                ctx.drawImage(img1.image, 0, 0, img1.width, img1.height, x, y, img1.width, img1.height);
+                ctx.drawImage(img2.image, 0, 0, img2.width, img2.height, canvas.width - x, y, img2.width, img2.height);
+            }
+        }
+    });
+</script>
+</html>
+
