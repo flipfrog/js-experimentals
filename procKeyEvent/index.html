@@ -1,0 +1,101 @@
+<html lang="ja">
+<body>
+<h4>
+    Loading images Test.
+</h4>
+<div>
+    <canvas id="canvas_1" width="600" height="600"></canvas>
+</div>
+</body>
+<script src="../js/jquery.min.js"></script>
+<script>
+    $(function(){
+        const canvas = document.getElementById('canvas_1');
+        const ctx = canvas.getContext('2d');
+
+        // load images and start updating frame
+        const imgPromise1 = loadImage('img/pengo_1.png');
+        const imgPromise2 = loadImage('img/pengo_2.png');
+        Promise.all([imgPromise1, imgPromise2])
+            .then(images => {
+                [img1, img2] = images;
+                console.log(`img1: w,h=(${img1.width},${img1.height})`);
+                console.log(`img2: w,h=(${img2.width},${img2.height})`);
+                // register key event procedure
+                document.addEventListener('keydown', e => procKeyEvents(e, KEY_KEYDOWN));
+                document.addEventListener('keyup', e => procKeyEvents(e, KEY_KEYUP));
+                // start updating canvas frame
+                requestAnimationFrame(drawFrame);
+            });
+
+        // process key events
+        const KEY_KEYDOWN = 'keydown';
+        const KEY_KEYUP = 'keyup';
+        const KEY_LEFT = 'ArrowLeft';
+        const KEY_RIGHT = 'ArrowRight';
+        const KEY_UP = 'ArrowUp';
+        const KEY_DOWN = 'ArrowDown';
+        const KEY_SPACE = 'Space';
+        const KEY_ARROW_KEYS = [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN];
+        const arrowKeyDownStatuses = {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false};
+        let spaceKeyDownStatus = false;
+        function procKeyEvents(e, handleType) {
+            // check arrow keys
+            if(KEY_ARROW_KEYS.indexOf(e.key) >= 0) {
+                arrowKeyDownStatuses[e.key] = (handleType === KEY_KEYDOWN);
+            }
+            // check space key
+            if (e.key === KEY_SPACE) {
+                spaceKeyDownStatus = (handleType === KEY_KEYDOWN);
+            }
+        }
+
+        // loading image
+        async function loadImage(imagePath) {
+            return new Promise(resolve => {
+                const image = new Image();
+                image.addEventListener('load', () => {
+                    resolve({image: image, width: image.width, height: image.height});
+                });
+                image.src = imagePath;
+            });
+        }
+
+        // draw frame which calls canvas-update function
+        let lastMilliSec = null;
+        let img1 = null, img2 = null;
+        function drawFrame(currentTime) {
+            const currentMilliSec = currentTime/1000;
+            const delta = lastMilliSec ? currentMilliSec - lastMilliSec : 0;
+            lastMilliSec = currentMilliSec;
+            update(delta);
+            requestAnimationFrame(drawFrame);
+        }
+
+        // update canvas
+        let x = 0, y = 50;
+        const pps = 20; // speed px/sec
+        function update(delta) {
+            // move sprite according to keydown status of arrow keys.
+            const pxDelta = delta * pps;
+            if (arrowKeyDownStatuses[KEY_LEFT]) {
+                x = (x - pxDelta) % canvas.width;
+            }
+            if (arrowKeyDownStatuses[KEY_RIGHT]) {
+                x = (x + pxDelta) % canvas.width;
+            }
+            if (arrowKeyDownStatuses[KEY_UP]) {
+                y = (y - pxDelta) % canvas.height;
+            }
+            if (arrowKeyDownStatuses[KEY_DOWN]) {
+                y = (y + pxDelta) % canvas.height;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (img1 && img2) {
+                ctx.drawImage(img1.image, 0, 0, img1.width, img1.height, x, y, img1.width, img1.height);
+            }
+        }
+    });
+</script>
+</html>
+
