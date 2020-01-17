@@ -1,6 +1,6 @@
 import atlas from "./atlas.js";
 
-$(function(){
+(function(){
     const canvas = document.getElementById('canvas_1');
     const ctx = canvas.getContext('2d');
     createTextureAtlas(atlas)
@@ -116,5 +116,5 @@ $(function(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawSprite(ctx, spriteMap['pengo_2.png'], x, y);
     }
-});
+})();
 
