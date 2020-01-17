@@ -7,11 +7,19 @@ import atlas from "./atlas.js";
         .then(() => {
             console.log('*** completed loading texture-atlas.');
             // register key event procedure
-            document.addEventListener('keydown', e => procKeyEvents(e, KEY_KEYDOWN));
-            document.addEventListener('keyup', e => procKeyEvents(e, KEY_KEYUP));
+            canvas.addEventListener('keydown', e => procKeyEvents(e, KEY_KEYDOWN), false);
+            canvas.addEventListener('keyup', e => procKeyEvents(e, KEY_KEYUP), false);
+            canvas.addEventListener('click', e => procMouseClick(e), false);
             // start updating canvas frame
             requestAnimationFrame(drawFrame);
         });
+
+    // process mouse click
+    function procMouseClick(e) {
+        const rect = e.target.getBoundingClientRect();
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    }
 
     // process key events
     const KEY_KEYDOWN = 'keydown';
@@ -59,6 +67,12 @@ import atlas from "./atlas.js";
         ctx.translate(x+sprite.anchor.x, y+sprite.anchor.y);
         ctx.rotate(sprite.rotate * Math.PI/180);
         ctx.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height, 0, 0, sprite.width, sprite.height);
+        //
+        ctx.strokeStyle = 'green';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 5, 5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        //
         ctx.restore();
     }
 
@@ -115,6 +129,12 @@ import atlas from "./atlas.js";
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawSprite(ctx, spriteMap['pengo_2.png'], x, y);
+        //
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        ctx.ellipse(x, y, 5, 5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        //
     }
 })();
 
