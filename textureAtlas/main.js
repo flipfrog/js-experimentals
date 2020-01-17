@@ -47,6 +47,7 @@ $(function(){
     }
 
     // create texture atlas data structure from control file(js file)
+    // TODO: add sprites' border-area
     const spriteMap = {};
     async function createTextureAtlas(atlas) {
         const imageFiles = atlas.map(file => file.imageFile);
@@ -65,7 +66,11 @@ $(function(){
 
     // draw sprite on canvas
     function drawSprite(ctx, sprite, x, y) {
-        ctx.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height, x, y, sprite.width, sprite.height);
+        ctx.save();
+        ctx.translate(x+sprite.anchor.x, y+sprite.anchor.y);
+        ctx.rotate(sprite.rotate * Math.PI/180);
+        ctx.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height, 0, 0, sprite.width, sprite.height);
+        ctx.restore();
     }
 
     // load image files
