@@ -87,7 +87,6 @@ $(function(){
 
     // draw frame which calls canvas-update function
     let lastMilliSec = null;
-    let img1 = null, img2 = null;
     function drawFrame(currentTime) {
         const currentMilliSec = currentTime/1000;
         const delta = lastMilliSec ? currentMilliSec - lastMilliSec : 0;
