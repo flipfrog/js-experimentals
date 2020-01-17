@@ -1,22 +1,11 @@
 import atlas from "./atlas.js";
 
 $(function(){
+    const canvas = document.getElementById('canvas_1');
+    const ctx = canvas.getContext('2d');
     createTextureAtlas(atlas)
         .then(() => {
             console.log('*** completed loading texture-atlas.');
-        });
-
-    const canvas = document.getElementById('canvas_1');
-    const ctx = canvas.getContext('2d');
-
-    // load images and start updating frame
-    const imgPromise1 = loadImage('img/pengo_1.png');
-    const imgPromise2 = loadImage('img/pengo_2.png');
-    Promise.all([imgPromise1, imgPromise2])
-        .then(images => {
-            [img1, img2] = images;
-            console.log(`img1: w,h=(${img1.width},${img1.height})`);
-            console.log(`img2: w,h=(${img2.width},${img2.height})`);
             // register key event procedure
             document.addEventListener('keydown', e => procKeyEvents(e, KEY_KEYDOWN));
             document.addEventListener('keyup', e => procKeyEvents(e, KEY_KEYUP));
