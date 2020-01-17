@@ -64,15 +64,9 @@ import atlas from "./atlas.js";
     // draw sprite on canvas
     function drawSprite(ctx, sprite, x, y) {
         ctx.save();
-        ctx.translate(x+sprite.anchor.x, y+sprite.anchor.y);
+        ctx.translate(x, y);
         ctx.rotate(sprite.rotate * Math.PI/180);
-        ctx.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height, 0, 0, sprite.width, sprite.height);
-        //
-        ctx.strokeStyle = 'green';
-        ctx.beginPath();
-        ctx.ellipse(0, 0, 5, 5, 0, 0, Math.PI * 2);
-        ctx.stroke();
-        //
+        ctx.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height, -sprite.anchor.x, -sprite.anchor.y, sprite.width, sprite.height);
         ctx.restore();
     }
 
@@ -110,7 +104,7 @@ import atlas from "./atlas.js";
     }
 
     // update canvas
-    let x = 0, y = 50;
+    let x = 50, y = 50;
     const pps = 20; // speed px/sec
     function update(delta) {
         // move sprite according to keydown status of arrow keys.
@@ -129,12 +123,6 @@ import atlas from "./atlas.js";
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawSprite(ctx, spriteMap['pengo_2.png'], x, y);
-        //
-        ctx.strokeStyle = 'red';
-        ctx.beginPath();
-        ctx.ellipse(x, y, 5, 5, 0, 0, Math.PI * 2);
-        ctx.stroke();
-        //
     }
 })();
 
