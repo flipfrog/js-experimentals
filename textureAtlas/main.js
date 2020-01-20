@@ -74,21 +74,17 @@ import atlas from "./atlas.js";
     async function loadImages(imagePaths) {
         return new Promise(resolve => {
             const imagePromises = [];
-            imagePaths.forEach(imagePath => {
-                imagePromises.push(loadImage(imagePath));
-            });
+            imagePaths.forEach(imagePath => imagePromises.push(loadImage(imagePath)));
             Promise.all(imagePromises)
                 .then(results => resolve(results));
         });
     }
 
-    // loading image
+    // loading single image file
     async function loadImage(imagePath) {
         return new Promise(resolve => {
             const image = new Image();
-            image.addEventListener('load', () => {
-                resolve(image);
-            });
+            image.addEventListener('load', () => resolve(image));
             image.src = imagePath;
         });
     }
