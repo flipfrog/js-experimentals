@@ -1,5 +1,3 @@
-import atlas from "./atlas.js";
-
 export default class {
     canvas = document.getElementById('canvas_1');
     ctx = this.canvas.getContext('2d');
