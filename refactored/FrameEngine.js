@@ -1,20 +1,17 @@
 export default class {
-    canvas = document.getElementById('canvas_1');
-    ctx = this.canvas.getContext('2d');
-
-    constructor(atlas) {
-        this.createTextureAtlas(atlas)
-            .then(() => {
-                console.log('*** completed loading texture-atlas.');
-                // register key event procedure
-                this.canvas.addEventListener('keydown', e => this.procKeyEvents(e, this.KEY_KEYDOWN), false);
-                this.canvas.addEventListener('keyup', e => this.procKeyEvents(e, this.KEY_KEYUP), false);
-                this.canvas.addEventListener('click', e => this.procMouseClick(e), false);
-            });
+    // set canvas
+    setCanvas(canvasId) {
+        // set canvas and context
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        // register key event procedure
+        this.canvas.addEventListener('keydown', e => this.procKeyEvents(e, this.KEY_KEYDOWN), false);
+        this.canvas.addEventListener('keyup', e => this.procKeyEvents(e, this.KEY_KEYUP), false);
+        this.canvas.addEventListener('click', e => this.procMouseClick(e), false);
     }
 
+    // start updating canvas frame
     startFrame () {
-        // start updating canvas frame
         requestAnimationFrame(this.drawFrame.bind(this));
     }
 
