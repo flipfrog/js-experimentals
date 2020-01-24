@@ -6,9 +6,9 @@ import atlas from './atlas.js';
     engine.setCanvas('canvas_1');
     engine.setUpdateHandler(update);
     // register key event procedure
-    engine.setEventHandler('keydown', procKeyEvents);
-    engine.setEventHandler('keyup', procKeyEvents);
-    engine.setEventHandler('click', procMouseClick);
+    engine.setEventHandler(engine.EVENT_TYPE_KEYDOWN, procKeyEvents);
+    engine.setEventHandler(engine.EVENT_TYPE_KEYUP, procKeyEvents);
+    engine.setEventHandler(engine.EVENT_TYPE_CLICK, procMouseClick);
 
     engine.createTextureAtlas(atlas)
         .then(() => engine.startFrame());
@@ -22,16 +22,16 @@ import atlas from './atlas.js';
         const canvas = engine.getCanvas();
         // move sprite according to keydown status of arrow keys.
         const pxDelta = delta * pps;
-        if (arrowKeyDownStatuses[KEY_LEFT]) {
+        if (arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT]) {
             x = (x - pxDelta) % canvas.width;
         }
-        if (arrowKeyDownStatuses[KEY_RIGHT]) {
+        if (arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT]) {
             x = (x + pxDelta) % canvas.width;
         }
-        if (arrowKeyDownStatuses[KEY_UP]) {
+        if (arrowKeyDownStatuses[engine.KEY_SYMBOL_UP]) {
             y = (y - pxDelta) % canvas.height;
         }
-        if (arrowKeyDownStatuses[KEY_DOWN]) {
+        if (arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN]) {
             y = (y + pxDelta) % canvas.height;
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -39,22 +39,17 @@ import atlas from './atlas.js';
     }
 
     // process key events
-    const KEY_LEFT = 'ArrowLeft';
-    const KEY_RIGHT = 'ArrowRight';
-    const KEY_UP = 'ArrowUp';
-    const KEY_DOWN = 'ArrowDown';
-    const KEY_SPACE = 'Space';
-    const KEY_ARROW_KEYS = [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN];
+    const KEY_ARROW_KEYS = [engine.KEY_SYMBOL_LEFT, engine.KEY_SYMBOL_RIGHT, engine.KEY_SYMBOL_UP, engine.KEY_SYMBOL_DOWN];
     const arrowKeyDownStatuses = {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false};
     let spaceKeyDownStatus = false;
-    function procKeyEvents(e, handleType) {
+    function procKeyEvents(e, eventType) {
         // check arrow keys
         if (KEY_ARROW_KEYS.indexOf(e.key) >= 0) {
-            arrowKeyDownStatuses[e.key] = (handleType === 'keydown');
+            arrowKeyDownStatuses[e.key] = (eventType === engine.EVENT_TYPE_KEYDOWN);
         }
         // check space key
-        if (e.key === KEY_SPACE) {
-            spaceKeyDownStatus = (handleType === 'keydown');
+        if (e.key === engine.KEY_SYMBOL_SPACE) {
+            spaceKeyDownStatus = (eventType === engine.EVENT_TYPE_KEYDOWN);
         }
     }
 

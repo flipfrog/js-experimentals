@@ -1,4 +1,12 @@
 export default class {
+    // literals
+    // key symbols for event handler
+    KEY_SYMBOL_LEFT = 'ArrowLeft';
+    KEY_SYMBOL_RIGHT = 'ArrowRight';
+    KEY_SYMBOL_UP = 'ArrowUp';
+    KEY_SYMBOL_DOWN = 'ArrowDown';
+    KEY_SYMBOL_SPACE = 'Space';
+
     // set canvas
     canvas = null;
     ctx = null;
@@ -18,8 +26,14 @@ export default class {
     }
 
     // set event handler
-    setEventHandler(eventName, handler) {
-        this.canvas.addEventListener(eventName, e => handler(e, eventName), false);
+    EVENT_TYPE_KEYDOWN = 'keydown';
+    EVENT_TYPE_KEYUP = 'keyup';
+    EVENT_TYPE_CLICK = 'click';
+    setEventHandler(type, handler) {
+        this.canvas.addEventListener(type, e => {
+            handler(e, type);
+            e.preventDefault();
+        }, false);
     }
 
     // start updating canvas frame
