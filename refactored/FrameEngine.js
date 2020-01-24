@@ -7,6 +7,9 @@ export default class {
     KEY_SYMBOL_DOWN = 'ArrowDown';
     KEY_SYMBOL_SPACE = 'Space';
 
+    // data
+    clientData = {};
+
     // set canvas
     canvas = null;
     ctx = null;
@@ -16,6 +19,12 @@ export default class {
         this.ctx = this.canvas.getContext('2d');
     }
 
+    // set client data
+    setClientData(data) {
+        this.clientData = Object.assign({}, data);
+    }
+
+    getClientData = () => this.clientData;
     getCanvas = () => this.canvas;
     getCtx = () => this.ctx;
 
@@ -31,7 +40,7 @@ export default class {
     EVENT_TYPE_CLICK = 'click';
     setEventHandler(type, handler) {
         this.canvas.addEventListener(type, e => {
-            handler(e, type);
+            handler(this, e, type);
             e.preventDefault();
         }, false);
     }
@@ -98,7 +107,7 @@ export default class {
         const currentMilliSec = currentTime/1000;
         const delta = this.lastMilliSec ? currentMilliSec - this.lastMilliSec : 0;
         this.lastMilliSec = currentMilliSec;
-        this.updateHandler(delta);
+        this.updateHandler(this, delta);
         requestAnimationFrame(this.drawFrame.bind(this));
     }
 };
