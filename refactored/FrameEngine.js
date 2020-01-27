@@ -107,8 +107,7 @@ export default class {
         const images = await this.loadImages(imageFiles);
         // analyze texture atlas structure
         atlas.forEach((file, index) => {
-            file.textures.forEach(_texture => {
-                const texture = Object.assign({}, _texture);
+            file.textures.forEach(texture => {
                 texture.image = images[index];
                 this.textureMap[texture.name] = texture;
             });
@@ -132,8 +131,7 @@ export default class {
     // load image files
     async loadImages(imagePaths) {
         return new Promise(resolve => {
-            const imagePromises = [];
-            imagePaths.forEach(imagePath => imagePromises.push(this.loadImage(imagePath)));
+            const imagePromises = imagePaths.map(imagePath => this.loadImage(imagePath));
             Promise.all(imagePromises)
                 .then(results => resolve(results));
         });
