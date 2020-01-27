@@ -50,7 +50,9 @@ import atlas from './atlas.js';
         if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN]) {
             y = (y + pxDelta) % canvas.height;
         }
-        sprite.setPosition(x, y, 0);
+        const rotate = sprite.rotate + delta * 45;
+        console.log('rotate='+rotate);
+        sprite.setPosition(x, y, rotate);
         engine.setClientData(data);
     }
 
@@ -73,10 +75,8 @@ import atlas from './atlas.js';
     function procMouseClick(engine, e) {
         const rect = e.target.getBoundingClientRect();
         const sprite = engine.getSprite('sprite_1');
-        let x = sprite.x;
-        let y = sprite.y;
-        x = e.clientX - rect.left;
-        y = e.clientY - rect.top;
-        sprite.setPosition(x, y, 0);
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        sprite.setPosition(x, y, sprite.rotate);
     }
 })();

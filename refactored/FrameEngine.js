@@ -109,7 +109,7 @@ export default class {
         if (texture) {
             ctx.save();
             ctx.translate(x, y);
-            ctx.rotate(texture.rotate * Math.PI/180);
+            ctx.rotate((texture.rotate + rotate)* Math.PI/180);
             ctx.drawImage(texture.image,
                 texture.x, texture.y, texture.width, texture.height,
                 -texture.anchor.x, -texture.anchor.y, texture.width, texture.height);
