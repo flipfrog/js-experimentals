@@ -5,7 +5,7 @@ import atlas from './atlas.js';
     // create engines on each canvas
     [1, 2].forEach(index => {
         const engine = new FrameEngine();
-        engine.setCanvas('canvas_'+index);
+        engine.setCanvas('canvas_'+index, (index === 1));
         engine.setClientData({
             pps: 20,
             arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},

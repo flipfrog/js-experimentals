@@ -7,16 +7,28 @@ export default class {
     KEY_SYMBOL_DOWN = 'ArrowDown';
     KEY_SYMBOL_SPACE = 'Space';
 
+    // display fps
+    displayFps = true;
+
     // data
     clientData = {};
 
+    // canvas as backing data
+    outScreenCanvas = null;
+    outScreenCtx = null;
     // set canvas
     canvas = null;
     ctx = null;
-    setCanvas(canvasId) {
+    setCanvas(canvasId, useOutScreenCanvas=false) {
         // set canvas and context
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
+        if (useOutScreenCanvas) {
+            this.outScreenCanvas = document.createElement('canvas');
+            this.outScreenCanvas.width = this.canvas.width;
+            this.outScreenCanvas.height = this.canvas.height;
+            this.outScreenCtx = this.outScreenCanvas.getContext('2d');
+        }
     }
 
     // set client data
@@ -25,8 +37,8 @@ export default class {
     }
 
     getClientData = () => this.clientData;
-    getCanvas = () => this.canvas;
-    getCtx = () => this.ctx;
+    getCanvas = () => (this.outScreenCanvas ? this.outScreenCanvas : this.canvas);
+    getCtx = () => (this.outScreenCtx ? this.outScreenCtx : this.ctx);
 
     // set frame updating handler
     updateHandler = () => {};
@@ -140,8 +152,9 @@ export default class {
     drawFrame(currentTime) {
         const currentMilliSec = currentTime/1000;
         const delta = this.lastMilliSec ? currentMilliSec - this.lastMilliSec : 0;
+        const ctx = (this.outScreenCtx ? this.outScreenCtx : this.ctx);
         this.lastMilliSec = currentMilliSec;
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.updateHandler(this, delta);
         // draw sprites
         const spriteLayerNos = Object.keys(this.sprites);
@@ -149,6 +162,20 @@ export default class {
             const spriteTags = Object.keys(this.sprites[layerNo]);
             spriteTags.forEach(spriteTag => this.sprites[layerNo][spriteTag].draw());
         });
+        if (this.displayFps) {
+            const fps = (1/delta).toFixed(1);
+            ctx.save();
+            ctx.fillStyle = 'black';
+            ctx.font = '24px';
+            ctx.fillText(fps+' fps', 10, 10);
+            ctx.restore();
+        }
+        if (this.outScreenCanvas) {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.drawImage(this.outScreenCanvas,
+                0, 0, this.canvas.width, this.canvas.height,
+                0, 0, this.canvas.width, this.canvas.height);
+        }
         requestAnimationFrame(this.drawFrame.bind(this));
     }
 };
