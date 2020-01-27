@@ -98,7 +98,6 @@ export default class {
                 const texture = Object.assign({}, _texture);
                 texture.image = images[index];
                 this.textureMap[texture.name] = texture;
-                console.log('created texture:'+texture.name);
             });
         });
     }

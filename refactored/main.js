@@ -51,7 +51,6 @@ import atlas from './atlas.js';
             y = (y + pxDelta) % canvas.height;
         }
         const rotate = sprite.rotate + delta * 45;
-        console.log('rotate='+rotate);
         sprite.setPosition(x, y, rotate);
         engine.setClientData(data);
     }
