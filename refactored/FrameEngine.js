@@ -34,6 +34,41 @@ export default class {
         this.updateHandler = handler;
     }
 
+    // add sprite to array
+    sprites = {};
+    spriteMap = {};
+    addSprite(sprite) {
+        if (!this.sprites[sprite.layerNo]) {
+            this.sprites[sprite.layerNo] = {};
+        }
+        if(!this.sprites[sprite.layerNo][sprite.tag] && !this.spriteMap[sprite.tag]) {
+            this.sprites[sprite.layerNo][sprite.tag] = sprite;
+            this.spriteMap[sprite.tag] = sprite;
+        } else {
+            console.log(`sprite tag name ${sprite.tag} already exits`);
+        }
+    }
+
+    // remove sprite
+    removeSprite(tag) {
+        const layerNos = Object.keys(this.sprites);
+        layerNos.forEach(layerNo => {
+            if (this.sprites[layerNo][tag] && this.spriteMap[tag]) {
+                delete this.sprites[layerNo][tag];
+            } else {
+                console.log(`sprite tag name ${tag} does not exist`);
+            }
+            if (this.sprites[layerNo].length === 0) {
+                delete this.sprites[layerNo];
+            }
+        });
+    }
+
+    // get sprite
+    getSprite(tag) {
+        return this.spriteMap[tag];
+    }
+
     // set event handler
     EVENT_TYPE_KEYDOWN = 'keydown';
     EVENT_TYPE_KEYUP = 'keyup';
@@ -51,33 +86,33 @@ export default class {
     }
 
     // create texture atlas data structure from control file(js file)
-    // TODO: add sprites' border-area
-    spriteMap = {};
-    async createTextureAtlas(atlas) {
+    // TODO: add textures' border-area
+    textureMap = {};
+    async loadTextureAtlas(atlas) {
         const imageFiles = atlas.map(file => file.imageFile);
-        // load image for sprites
+        // load image for textures
         const images = await this.loadImages(imageFiles);
         // analyze texture atlas structure
         atlas.forEach((file, index) => {
-            file.sprites.forEach(_sprite => {
-                const sprite = Object.assign({}, _sprite);
-                sprite.image = images[index];
-                this.spriteMap[sprite.tagName] = sprite;
-                console.log('created sprite:'+sprite.tagName);
+            file.textures.forEach(_texture => {
+                const texture = Object.assign({}, _texture);
+                texture.image = images[index];
+                this.textureMap[texture.name] = texture;
+                console.log('created texture:'+texture.name);
             });
         });
     }
 
-    // draw sprite on canvas
-    drawSprite(ctx, spriteName, x, y) {
-        const sprite = this.spriteMap[spriteName] || null;
-        if (sprite) {
+    // draw texture on canvas
+    drawTexture(ctx, texturesName, x, y, rotate = 0) {
+        const texture = this.textureMap[texturesName] || null;
+        if (texture) {
             ctx.save();
             ctx.translate(x, y);
-            ctx.rotate(sprite.rotate * Math.PI/180);
-            ctx.drawImage(sprite.image,
-                sprite.x, sprite.y, sprite.width, sprite.height,
-                -sprite.anchor.x, -sprite.anchor.y, sprite.width, sprite.height);
+            ctx.rotate(texture.rotate * Math.PI/180);
+            ctx.drawImage(texture.image,
+                texture.x, texture.y, texture.width, texture.height,
+                -texture.anchor.x, -texture.anchor.y, texture.width, texture.height);
             ctx.restore();
         }
     }
@@ -107,7 +142,43 @@ export default class {
         const currentMilliSec = currentTime/1000;
         const delta = this.lastMilliSec ? currentMilliSec - this.lastMilliSec : 0;
         this.lastMilliSec = currentMilliSec;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.updateHandler(this, delta);
+        // draw sprites
+        const spriteLayerNos = Object.keys(this.sprites);
+        spriteLayerNos.forEach(layerNo => {
+            const spriteTags = Object.keys(this.sprites[layerNo]);
+            spriteTags.forEach(spriteTag => this.sprites[layerNo][spriteTag].draw());
+        });
         requestAnimationFrame(this.drawFrame.bind(this));
     }
 };
+
+export class Sprite {
+    x = 0;
+    y = 0;
+    rotate = 0;
+    name = null;
+    layerNo = 0;
+    tag = null;
+
+    /**
+     * constructor
+     * @param engine frame engine
+     * @param name texture name
+     * @param layerNo drawing layer no
+     * @param tag tag name
+     */
+    constructor(engine, name, layerNo, tag) {
+        this.engine = engine;
+        this.name = name;
+        this.layerNo = layerNo;
+        this.tag = tag;
+    }
+    // set sprite's position (and rotation)
+    setPosition(x, y, rotate = 0) {
+        [this.x, this.y, this.rotate] = [x, y, rotate];
+    }
+    // draw sprite
+    draw = () => this.engine.drawTexture(this.engine.getCtx(), this.name, this.x, this.y, this.rotate);
+}

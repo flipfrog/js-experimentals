@@ -1,9 +1,9 @@
 export default [
     {
         imageFile: 'img/pengo_1.png',
-        sprites: [
+        textures: [
             {
-                tagName: 'pengo_1.png',
+                name: 'pengo_1.png',
                 x: 0,
                 y: 0,
                 width: 20,
@@ -12,7 +12,7 @@ export default [
                 anchor: {x: 10, y: 10}
             },
             {
-                tagName: 'partial_12.png',
+                name: 'partial_12.png',
                 x: 20,
                 y: 0,
                 width: 20,
@@ -24,9 +24,9 @@ export default [
     },
     {
         imageFile: 'img/pengo_2.png',
-        sprites: [
+        textures: [
             {
-                tagName: 'pengo_2.png',
+                name: 'pengo_2.png',
                 x: 40,
                 y: 40,
                 width: 20,
@@ -35,7 +35,7 @@ export default [
                 anchor: {x: 10, y: 10}
             },
             {
-                tagName: 'partial_22.png',
+                name: 'partial_22.png',
                 x: 20,
                 y: 0,
                 width: 20,

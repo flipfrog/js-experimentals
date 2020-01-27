@@ -1,4 +1,4 @@
-import FrameEngine from "./FrameEngine.js";
+import FrameEngine, {Sprite} from "./FrameEngine.js";
 import atlas from './atlas.js';
 
 (function(){
@@ -7,12 +7,15 @@ import atlas from './atlas.js';
         const engine = new FrameEngine();
         engine.setCanvas('canvas_'+index);
         engine.setClientData({
-            x: 50,
-            y:50,
             pps: 20,
             arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
             spaceKeyDownStatus: false
         });
+
+        // create sprites
+        const sprite = new Sprite(engine, 'pengo_2.png', 0, 'sprite_1');
+        sprite.setPosition(100, 100);
+        engine.addSprite(sprite);
 
         // register event handlers
         engine.setUpdateHandler(update);
@@ -20,17 +23,17 @@ import atlas from './atlas.js';
         engine.setEventHandler(engine.EVENT_TYPE_KEYUP, procKeyEvents);
         engine.setEventHandler(engine.EVENT_TYPE_CLICK, procMouseClick);
         // create sprites
-        engine.createTextureAtlas(atlas)
+        engine.loadTextureAtlas(atlas)
             .then(() => engine.startFrame());
     });
 
     // update canvas
     function update(engine, delta) {
-        const ctx = engine.getCtx();
         const canvas = engine.getCanvas();
         const data = engine.getClientData();
-        let x = data.x;
-        let y = data.y;
+        const sprite = engine.getSprite('sprite_1');
+        let x = sprite.x;
+        let y = sprite.y;
         const pps = data.pps;
 
         // move sprite according to keydown status of arrow keys.
@@ -47,11 +50,7 @@ import atlas from './atlas.js';
         if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN]) {
             y = (y + pxDelta) % canvas.height;
         }
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        engine.drawSprite(ctx, 'pengo_2.png', x, y);
-
-        data.x = x;
-        data.y = y;
+        sprite.setPosition(x, y, 0);
         engine.setClientData(data);
     }
 
@@ -72,10 +71,12 @@ import atlas from './atlas.js';
 
     // process mouse click
     function procMouseClick(engine, e) {
-        const data = engine.getClientData();
         const rect = e.target.getBoundingClientRect();
-        data.x = e.clientX - rect.left;
-        data.y = e.clientY - rect.top;
-        engine.setClientData(data);
+        const sprite = engine.getSprite('sprite_1');
+        let x = sprite.x;
+        let y = sprite.y;
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+        sprite.setPosition(x, y, 0);
     }
 })();
