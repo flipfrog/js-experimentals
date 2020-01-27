@@ -8,7 +8,7 @@ export default class {
     KEY_SYMBOL_SPACE = 'Space';
 
     // display fps
-    displayFps = true;
+    displayFps = false;
 
     // data
     clientData = {};
@@ -39,6 +39,7 @@ export default class {
     getClientData = () => this.clientData;
     getCanvas = () => (this.outScreenCanvas ? this.outScreenCanvas : this.canvas);
     getCtx = () => (this.outScreenCtx ? this.outScreenCtx : this.ctx);
+    setDisplayFps = (displayFps) => {this.displayFps = displayFps};
 
     // set frame updating handler
     updateHandler = () => {};

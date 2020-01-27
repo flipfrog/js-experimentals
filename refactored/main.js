@@ -6,6 +6,7 @@ import atlas from './atlas.js';
     [1, 2].forEach(index => {
         const engine = new FrameEngine();
         engine.setCanvas('canvas_'+index, (index === 1));
+        engine.setDisplayFps(true);
         engine.setClientData({
             pps: 20,
             arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
