@@ -63,12 +63,13 @@ import atlas from './atlas.js';
     function procKeyEvents(engine, e, eventType) {
         const KEY_ARROW_KEYS = [engine.KEY_SYMBOL_LEFT, engine.KEY_SYMBOL_RIGHT, engine.KEY_SYMBOL_UP, engine.KEY_SYMBOL_DOWN];
         const data = engine.getClientData();
+        const eventKey = e.key;
         // check arrow keys
-        if (KEY_ARROW_KEYS.indexOf(e.key) >= 0) {
-            data.arrowKeyDownStatuses[e.key] = (eventType === engine.EVENT_TYPE_KEYDOWN);
+        if (KEY_ARROW_KEYS.indexOf(eventKey) >= 0) {
+            data.arrowKeyDownStatuses[eventKey] = (eventType === engine.EVENT_TYPE_KEYDOWN);
         }
         // check space key
-        if (e.key === engine.KEY_SYMBOL_SPACE) {
+        if (eventKey === engine.KEY_SYMBOL_SPACE) {
             data.spaceKeyDownStatus = (eventType === engine.EVENT_TYPE_KEYDOWN);
         }
         engine.setClientData(data);
