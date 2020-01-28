@@ -14,10 +14,13 @@ export default class {
     clientData = {};
 
     // canvas as backing store data
+    /** @type HTMLCanvasElement */
     backingStoreCanvas = null;
     backingStoreCtx = null;
     // set canvas
+    /** @type HTMLCanvasElement */
     canvas = null;
+    /** @type CanvasRenderingContext2D */
     ctx = null;
     setCanvas(canvasId, useBackingStoreCanvas=false) {
         // set canvas and context
