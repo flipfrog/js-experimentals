@@ -15,22 +15,22 @@ export default class {
 
     // canvas as backing store data
     /** @type HTMLCanvasElement */
-    backingStoreCanvas = null;
-    backingStoreCtx = null;
+    offScreenCanvas = null;
+    offScreenCtx = null;
     // set canvas
     /** @type HTMLCanvasElement */
     canvas = null;
     /** @type CanvasRenderingContext2D */
     ctx = null;
-    setCanvas(canvasId, useBackingStoreCanvas=false) {
+    setCanvas(canvasId, useOffScreenCanvas=false) {
         // set canvas and context
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
-        if (useBackingStoreCanvas) {
-            this.backingStoreCanvas = document.createElement('canvas');
-            this.backingStoreCanvas.width = this.canvas.width;
-            this.backingStoreCanvas.height = this.canvas.height;
-            this.backingStoreCtx = this.backingStoreCanvas.getContext('2d');
+        if (useOffScreenCanvas) {
+            this.offScreenCanvas = document.createElement('canvas');
+            this.offScreenCanvas.width = this.canvas.width;
+            this.offScreenCanvas.height = this.canvas.height;
+            this.offScreenCtx = this.offScreenCanvas.getContext('2d');
         }
     }
 
@@ -40,8 +40,8 @@ export default class {
     }
 
     getClientData = () => this.clientData;
-    getCanvas = () => (this.backingStoreCanvas ? this.backingStoreCanvas : this.canvas);
-    getCtx = () => (this.backingStoreCtx ? this.backingStoreCtx : this.ctx);
+    getCanvas = () => (this.offScreenCanvas ? this.offScreenCanvas : this.canvas);
+    getCtx = () => (this.offScreenCtx ? this.offScreenCtx : this.ctx);
     setDisplayFps = (displayFps) => {this.displayFps = displayFps};
 
     // set user-update handler
@@ -154,7 +154,7 @@ export default class {
     drawFrame(currentTime) {
         const currentMilliSec = currentTime/1000;
         const delta = this.lastMilliSec ? currentMilliSec - this.lastMilliSec : 0;
-        const ctx = (this.backingStoreCtx ? this.backingStoreCtx : this.ctx);
+        const ctx = (this.offScreenCtx ? this.offScreenCtx : this.ctx);
         this.lastMilliSec = currentMilliSec;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.updateHandler(this, delta);
@@ -172,9 +172,9 @@ export default class {
             ctx.fillText(fps+' fps', 10, 10);
             ctx.restore();
         }
-        if (this.backingStoreCanvas) {
+        if (this.offScreenCanvas) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.drawImage(this.backingStoreCanvas,
+            this.ctx.drawImage(this.offScreenCanvas,
                 0, 0, this.canvas.width, this.canvas.height,
                 0, 0, this.canvas.width, this.canvas.height);
         }
