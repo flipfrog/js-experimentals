@@ -13,21 +13,21 @@ export default class {
     // data
     clientData = {};
 
-    // canvas as backing data
-    outScreenCanvas = null;
-    outScreenCtx = null;
+    // canvas as backing store data
+    backingStoreCanvas = null;
+    backingStoreCtx = null;
     // set canvas
     canvas = null;
     ctx = null;
-    setCanvas(canvasId, useOutScreenCanvas=false) {
+    setCanvas(canvasId, useBackingStoreCanvas=false) {
         // set canvas and context
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
-        if (useOutScreenCanvas) {
-            this.outScreenCanvas = document.createElement('canvas');
-            this.outScreenCanvas.width = this.canvas.width;
-            this.outScreenCanvas.height = this.canvas.height;
-            this.outScreenCtx = this.outScreenCanvas.getContext('2d');
+        if (useBackingStoreCanvas) {
+            this.backingStoreCanvas = document.createElement('canvas');
+            this.backingStoreCanvas.width = this.canvas.width;
+            this.backingStoreCanvas.height = this.canvas.height;
+            this.backingStoreCtx = this.backingStoreCanvas.getContext('2d');
         }
     }
 
@@ -37,11 +37,11 @@ export default class {
     }
 
     getClientData = () => this.clientData;
-    getCanvas = () => (this.outScreenCanvas ? this.outScreenCanvas : this.canvas);
-    getCtx = () => (this.outScreenCtx ? this.outScreenCtx : this.ctx);
+    getCanvas = () => (this.backingStoreCanvas ? this.backingStoreCanvas : this.canvas);
+    getCtx = () => (this.backingStoreCtx ? this.backingStoreCtx : this.ctx);
     setDisplayFps = (displayFps) => {this.displayFps = displayFps};
 
-    // set frame updating handler
+    // set user-update handler
     updateHandler = () => {};
     setUpdateHandler(handler) {
         this.updateHandler = handler;
@@ -62,7 +62,7 @@ export default class {
         }
     }
 
-    // remove sprite
+    // remove sprite TODO: confirm functionality
     removeSprite(tag) {
         const layerNos = Object.keys(this.sprites);
         layerNos.forEach(layerNo => {
@@ -146,12 +146,12 @@ export default class {
         });
     }
 
-    // draw frame which calls canvas-update function
+    // draw frame which calls user-update handler function
     lastMilliSec = null;
     drawFrame(currentTime) {
         const currentMilliSec = currentTime/1000;
         const delta = this.lastMilliSec ? currentMilliSec - this.lastMilliSec : 0;
-        const ctx = (this.outScreenCtx ? this.outScreenCtx : this.ctx);
+        const ctx = (this.backingStoreCtx ? this.backingStoreCtx : this.ctx);
         this.lastMilliSec = currentMilliSec;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.updateHandler(this, delta);
@@ -169,9 +169,9 @@ export default class {
             ctx.fillText(fps+' fps', 10, 10);
             ctx.restore();
         }
-        if (this.outScreenCanvas) {
+        if (this.backingStoreCanvas) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.drawImage(this.outScreenCanvas,
+            this.ctx.drawImage(this.backingStoreCanvas,
                 0, 0, this.canvas.width, this.canvas.height,
                 0, 0, this.canvas.width, this.canvas.height);
         }
