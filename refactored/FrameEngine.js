@@ -65,24 +65,29 @@ export default class {
         }
     }
 
-    // remove sprite TODO: confirm functionality
+    // remove sprite
     removeSprite(tag) {
         const layerNos = Object.keys(this.sprites);
+        let emptyLayerNo = -1;
         layerNos.forEach(layerNo => {
             if (this.sprites[layerNo][tag] && this.spriteMap[tag]) {
                 delete this.sprites[layerNo][tag];
+                delete this.spriteMap[tag];
             } else {
                 console.log(`sprite tag name ${tag} does not exist`);
             }
             if (this.sprites[layerNo].length === 0) {
-                delete this.sprites[layerNo];
+                emptyLayerNo = layerNo;
             }
         });
+        if (emptyLayerNo >= 0) {
+            delete this.sprites[emptyLayerNo];
+        }
     }
 
     // get sprite
     getSprite(tag) {
-        return this.spriteMap[tag];
+        return this.spriteMap[tag] || null;
     }
 
     // set event handler

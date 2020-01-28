@@ -39,26 +39,28 @@ import atlas from './atlas.js';
         for (let col = 100; col < 500; col += 50) {
             for (let row = 100; row < 500; row += 50) {
                 const sprite = engine.getSprite(`sprite_${row}_${col}`);
-                let x = sprite.x;
-                let y = sprite.y;
-                const pps = data.pps;
+                if (sprite) {
+                    let x = sprite.x;
+                    let y = sprite.y;
+                    const pps = data.pps;
 
-                // move sprite according to keydown status of arrow keys.
-                const pxDelta = delta * pps;
-                if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT]) {
-                    x = (x - pxDelta) % canvas.width;
+                    // move sprite according to keydown status of arrow keys.
+                    const pxDelta = delta * pps;
+                    if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT]) {
+                        x = (x - pxDelta) % canvas.width;
+                    }
+                    if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT]) {
+                        x = (x + pxDelta) % canvas.width;
+                    }
+                    if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_UP]) {
+                        y = (y - pxDelta) % canvas.height;
+                    }
+                    if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN]) {
+                        y = (y + pxDelta) % canvas.height;
+                    }
+                    const rotate = sprite.rotate + delta * 45;
+                    sprite.setPosition(x, y, rotate);
                 }
-                if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT]) {
-                    x = (x + pxDelta) % canvas.width;
-                }
-                if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_UP]) {
-                    y = (y - pxDelta) % canvas.height;
-                }
-                if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN]) {
-                    y = (y + pxDelta) % canvas.height;
-                }
-                const rotate = sprite.rotate + delta * 45;
-                sprite.setPosition(x, y, rotate);
             }
         }
     }
@@ -86,5 +88,8 @@ import atlas from './atlas.js';
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         sprite.setPosition(x, y, sprite.rotate);
+        if (engine.getSprite('sprite_150_100')) {
+            engine.removeSprite('sprite_150_100');
+        }
     }
 })();
