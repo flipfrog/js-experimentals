@@ -249,7 +249,7 @@ export class Particle { // divide into base and concrete class
 
         for (let i = 0; i < this.options.numTextures; i++) {
             const texture = new ParticleTexture(); // TODO: be vary particle textures
-            [texture.x, texture.y] = [this.cx, this.cy];
+            [texture.x, texture.y, texture.textureName] = [this.cx, this.cy, textureName];
             // compose texture velocities of fix and elastic part
             const baseVx = Math.cos(Math.random() * Math.PI * 2) * this.options.initialVelocity;
             const baseVy = Math.sin(Math.random() * Math.PI * 2) * this.options.initialVelocity;
