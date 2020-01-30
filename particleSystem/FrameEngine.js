@@ -91,6 +91,7 @@ export default class {
         return this.spriteMap[tag] || null;
     }
 
+    // add particle
     particles = [];
     addParticle(particle) {
         this.particles.push(particle);
