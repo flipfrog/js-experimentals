@@ -91,6 +91,11 @@ export default class {
         return this.spriteMap[tag] || null;
     }
 
+    particles = [];
+    addParticle(particle) {
+        this.particles.push(particle);
+    }
+
     // set event handler
     EVENT_TYPE_KEYDOWN = 'keydown';
     EVENT_TYPE_KEYUP = 'keyup';
@@ -217,7 +222,7 @@ export class Sprite {
     draw = () => this.engine.drawTexture(this.engine.getCtx(), this.name, this.x, this.y, this.rotate);
 }
 
-class Particle { // divide into base and concrete class
+export class Particle { // divide into base and concrete class
     cx = 0;
     cy = 0;
     textureName = null;
