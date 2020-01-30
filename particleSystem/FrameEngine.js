@@ -1,5 +1,6 @@
 export default class {
     // literals
+    VERSION = '1.0.0';
     // key symbols for event handler
     KEY_SYMBOL_LEFT = 'ArrowLeft';
     KEY_SYMBOL_RIGHT = 'ArrowRight';
@@ -223,12 +224,11 @@ class Particle { // divide into base and concrete class
     options = {
         duration: 1, // sec
         initialVelocity: 10, // px/sec
+        fixedVelocityRatio: .7, // fixed velocity ratio
         radius: 50, // px
         initialAlpha: 1,
         numTextures: 30,
-        angularVelocity: 0, // deg/sec
-        initialVx: 0, // px/sec
-        initialVy: 0, // px/sec
+        angularVelocity: 0, // deg/sec for sprite rotation
     };
     textures = [];
     // initialize own parameters
@@ -242,14 +242,22 @@ class Particle { // divide into base and concrete class
         for (let i = 0; i < this.options.numTextures; i++) {
             const texture = new ParticleTexture(); // TODO: be vary particle textures
             [texture.x, texture.y] = [this.cx, this.cy];
-            const initialVx = this.options.initialVx * .5 + this.options.initialVx * .5 * Math.random(); // TODO: parameterize fixed velocity ratio
-            const initialVy = this.options.initialVy * .5 + this.options.initialVy * .5 * Math.random(); // TODO: parameterize fixed velocity ratio
-            [texture.initialVx, texture.initialVy] = [initialVx, initialVy];
+            // compose texture velocities of fix and elastic part
+            const baseVx = Math.cos(Math.random() * Math.PI * 2) * this.options.initialVelocity;
+            const baseVy = Math.sin(Math.random() * Math.PI * 2) * this.options.initialVelocity;
+            const fixedVelocityRate = this.options.fixedVelocityRatio;
+            const elasticVelocityRatio = (1 - this.options.fixedVelocityRatio);
+            const vx = baseVx * fixedVelocityRate + baseVx * elasticVelocityRatio * Math.random();
+            const vy = baseVy * fixedVelocityRate + baseVy * elasticVelocityRatio * Math.random();
+            [texture.initialVx, texture.initialVy] = [vx, vy];
             this.textures.push(texture);
         }
     }
     // update textures
     update(engine, delta) {
+        this.textures = this.textures.filter(texture => {
+            return texture.elapsedTime < this.options.duration;
+        });
         this.textures.forEach(texture => texture.updateCoordinate(delta));
         this.textures.forEach(texture => texture.draw(engine));
     }
@@ -266,13 +274,10 @@ class ParticleTexture { // divide into base and concrete class
     rotate = 0;
     vr = 0; // deg/sec
     textureName = null;
-    updateElapsedTime(delta) {
-        this.elapsedTime += delta;
-    }
     updateCoordinate(delta) {
-        super.updateElapsedTime(delta);
-        const velocityMultiplyValue = 1/(1 - Math.pow(Math.E, this.elapsedTime)); // TODO: may need adjust
-        this.vx = this.initialVx * velocityMultiplyValue;
+        this.elapsedTime += delta;
+        const velocityMultiplyValue = 1/(1 - Math.pow(Math.E, this.elapsedTime)); // TODO: may need adjust a decay rate
+        this.vx = this.initialVx * velocityMultiplyValue; // TODO: to be more efficiency
         this.vy = this.initialVy * velocityMultiplyValue;
         this.x += (this.vx * delta);
         this.y += (this.vy * delta);
