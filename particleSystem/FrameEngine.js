@@ -175,6 +175,8 @@ export default class {
             const spriteTags = Object.keys(this.sprites[layerNo]);
             spriteTags.forEach(spriteTag => this.sprites[layerNo][spriteTag].draw());
         });
+        // draw particles
+        this.particles.forEach(particle => particle.update(this, delta));
         if (this.displayFps) {
             const fps = (1/delta).toFixed(1);
             ctx.save();
