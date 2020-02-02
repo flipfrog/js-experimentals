@@ -181,7 +181,7 @@ export default class {
         if (this.displayFps) {
             const fps = (1/delta).toFixed(1);
             ctx.save();
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = 'red';
             ctx.font = '24px';
             ctx.fillText(fps+' fps', 10, 10);
             ctx.restore();
