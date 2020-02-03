@@ -1,4 +1,4 @@
-import FrameEngine, {Sprite, ParticleSystem} from "./FrameEngine.js";
+import FrameEngine, {Sprite, ExplosionParticleSystem} from "./FrameEngine.js";
 import atlas from './atlas.js';
 
 (function(){
@@ -91,6 +91,6 @@ import atlas from './atlas.js';
         if (engine.getSprite('sprite_150_100')) {
             engine.removeSprite('sprite_150_100');
         }
-        engine.addParticle(new ParticleSystem(x, y, 'particle_tex_1.png'));
+        engine.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
     }
 })();
