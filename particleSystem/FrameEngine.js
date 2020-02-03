@@ -296,10 +296,10 @@ class ExplosionParticle extends ParticleBase {
         // compose texture velocities of fix and elastic part
         const baseVx = Math.cos(Math.random() * Math.PI * 2) * this.baseVelocity;
         const baseVy = Math.sin(Math.random() * Math.PI * 2) * this.baseVelocity;
-        const fixedVelocityRate = this.fixedVelocityRatio;
-        const elasticVelocityRatio = (1 - this.fixedVelocityRatio);
-        const vx = baseVx * (fixedVelocityRate + elasticVelocityRatio * Math.random());
-        const vy = baseVy * (fixedVelocityRate + elasticVelocityRatio * Math.random());
+        const fixedVelocitySegment = this.fixedVelocityRatio;
+        const elasticVelocitySegment = (1 - this.fixedVelocityRatio);
+        const vx = baseVx * (fixedVelocitySegment + elasticVelocitySegment * Math.random());
+        const vy = baseVy * (fixedVelocitySegment + elasticVelocitySegment * Math.random());
         [this.initialVx, this.initialVy] = [vx, vy];
     }
     updateCoordinate(delta) {
