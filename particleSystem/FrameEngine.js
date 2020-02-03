@@ -230,8 +230,8 @@ export class Particle { // divide into base and concrete class
     cy = 0;
     textureName = null;
     options = {
-        duration: 1, // sec
-        initialVelocity: 10, // px/sec
+        duration: 2, // sec
+        baseVelocity: 10, // px/sec
         fixedVelocityRatio: .7, // fixed velocity ratio
         radius: 50, // px
         initialAlpha: 1,
@@ -251,12 +251,12 @@ export class Particle { // divide into base and concrete class
             const texture = new ParticleTexture(); // TODO: be vary particle textures
             [texture.x, texture.y, texture.textureName] = [this.cx, this.cy, textureName];
             // compose texture velocities of fix and elastic part
-            const baseVx = Math.cos(Math.random() * Math.PI * 2) * this.options.initialVelocity;
-            const baseVy = Math.sin(Math.random() * Math.PI * 2) * this.options.initialVelocity;
+            const baseVx = Math.cos(Math.random() * Math.PI * 2) * this.options.baseVelocity;
+            const baseVy = Math.sin(Math.random() * Math.PI * 2) * this.options.baseVelocity;
             const fixedVelocityRate = this.options.fixedVelocityRatio;
             const elasticVelocityRatio = (1 - this.options.fixedVelocityRatio);
-            const vx = baseVx * fixedVelocityRate + baseVx * elasticVelocityRatio * Math.random();
-            const vy = baseVy * fixedVelocityRate + baseVy * elasticVelocityRatio * Math.random();
+            const vx = baseVx * (fixedVelocityRate + elasticVelocityRatio * Math.random());
+            const vy = baseVy * (fixedVelocityRate + elasticVelocityRatio * Math.random());
             [texture.initialVx, texture.initialVy] = [vx, vy];
             this.textures.push(texture);
         }
