@@ -225,14 +225,12 @@ export class Sprite {
     draw = () => this.engine.drawTexture(this.engine.getCtx(), this.name, this.x, this.y, this.rotate);
 }
 
-export class Particle { // divide into base and concrete class
+export class ParticleSystem { // divide into base and concrete class
     cx = 0;
     cy = 0;
     textureName = null;
     options = {
         duration: 2, // sec
-        baseVelocity: 10, // px/sec
-        fixedVelocityRatio: .7, // fixed velocity ratio
         radius: 50, // px
         initialAlpha: 1,
         numTextures: 30,
@@ -248,16 +246,7 @@ export class Particle { // divide into base and concrete class
         [this.cx, this.cy, this.textureName] = [cx, cy, textureName];
 
         for (let i = 0; i < this.options.numTextures; i++) {
-            const texture = new ParticleTexture(); // TODO: be vary particle textures
-            [texture.x, texture.y, texture.textureName] = [this.cx, this.cy, textureName];
-            // compose texture velocities of fix and elastic part
-            const baseVx = Math.cos(Math.random() * Math.PI * 2) * this.options.baseVelocity;
-            const baseVy = Math.sin(Math.random() * Math.PI * 2) * this.options.baseVelocity;
-            const fixedVelocityRate = this.options.fixedVelocityRatio;
-            const elasticVelocityRatio = (1 - this.options.fixedVelocityRatio);
-            const vx = baseVx * (fixedVelocityRate + elasticVelocityRatio * Math.random());
-            const vy = baseVy * (fixedVelocityRate + elasticVelocityRatio * Math.random());
-            [texture.initialVx, texture.initialVy] = [vx, vy];
+            const texture = new Particle(cx, cy, textureName);
             this.textures.push(texture);
         }
     }
@@ -271,7 +260,7 @@ export class Particle { // divide into base and concrete class
     }
 }
 
-class ParticleTexture { // divide into base and concrete class
+class Particle { // divide into base and concrete class
     elapsedTime = 0;
     x = 0;
     y = 0;
@@ -282,6 +271,19 @@ class ParticleTexture { // divide into base and concrete class
     rotate = 0;
     vr = 0; // deg/sec
     textureName = null;
+    baseVelocity = 10; // px/sec
+    fixedVelocityRatio = .5;
+    constructor(cx, cy, textureName) {
+        [this.x, this.y, this.textureName] = [cx, cy, textureName];
+        // compose texture velocities of fix and elastic part
+        const baseVx = Math.cos(Math.random() * Math.PI * 2) * this.baseVelocity;
+        const baseVy = Math.sin(Math.random() * Math.PI * 2) * this.baseVelocity;
+        const fixedVelocityRate = this.fixedVelocityRatio;
+        const elasticVelocityRatio = (1 - this.fixedVelocityRatio);
+        const vx = baseVx * (fixedVelocityRate + elasticVelocityRatio * Math.random());
+        const vy = baseVy * (fixedVelocityRate + elasticVelocityRatio * Math.random());
+        [this.initialVx, this.initialVy] = [vx, vy];
+    }
     updateCoordinate(delta) {
         this.elapsedTime += delta;
         const velocityMultiplyValue = 1/(1 - Math.pow(Math.E, this.elapsedTime)); // TODO: may need adjust a decay rate
