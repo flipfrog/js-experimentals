@@ -1,5 +1,6 @@
-import FrameEngine, {Sprite, ExplosionParticleSystem} from "./FrameEngine.js";
-import atlas from './atlas.js';
+import FrameEngine, {Sprite} from "./FrameEngine/engine.js";
+import {ExplosionParticleSystem} from './FrameEngine/particle.js';
+import atlas from './img/atlas.js';
 
 (function(){
     // create engines on each canvas
