@@ -24,12 +24,13 @@ import atlas from './img/atlas.js';
                 scene.addSprite(sprite);
             }
         }
-        // add event handlers
+        // add event listeners
         scene.eventListeners = [
             {type: engine.EVENT_TYPE_KEYDOWN, listener: procKeyEvents, useCapture: false},
             {type: engine.EVENT_TYPE_KEYUP, listener: procKeyEvents, useCapture: false},
             {type: engine.EVENT_TYPE_CLICK, listener: procMouseClick, useCapture: false},
         ];
+        // set frame update handler
         scene.updateHandler = update;
 
         // add scene to engine and change scene to just crated
