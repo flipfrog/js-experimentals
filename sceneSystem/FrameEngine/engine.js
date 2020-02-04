@@ -43,11 +43,10 @@ export default class {
         }
     }
 
-    // set client data
+    // setter and getters
     setClientData(data) {
         this.clientData = Object.assign({}, data);
     }
-
     getClientData = () => this.clientData;
     getCanvas = () => (this.offScreenCanvas ? this.offScreenCanvas : this.canvas);
     getCtx = () => (this.offScreenCtx ? this.offScreenCtx : this.ctx);
@@ -248,9 +247,19 @@ export class Sprite {
 
 export class Scene {
     tag = null;
+    // data
+    clientData = {};
+    // event listeners
     eventListeners = [];
     activeEventListenerIndices = [];
+    // frame update handler
     updateHandler = () => {};
+
+    // set and get client data
+    setClientData(data) {
+        this.clientData = Object.assign({}, data);
+    }
+    getClientData = () => this.clientData;
 
     // add sprite to array
     sprites = {};

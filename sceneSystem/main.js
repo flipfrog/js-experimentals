@@ -9,13 +9,14 @@ import atlas from './img/atlas.js';
         const engine = new FrameEngine();
         engine.setCanvas('canvas_'+index, (index === 1));
         engine.setDisplayFps(true);
-        engine.setClientData({
+        // create scene
+        const scene = new Scene();
+        // set client data
+        scene.setClientData({
             pps: 20,
             arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
             spaceKeyDownStatus: false
         });
-        // create scene
-        const scene = new Scene();
         // create sprites
         for (let col = 100; col < 500; col += 50) {
             for (let row = 100; row < 500; row += 50) {
@@ -45,7 +46,7 @@ import atlas from './img/atlas.js';
     // update canvas
     function update(engine, scene, delta) {
         const canvas = engine.getCanvas();
-        const data = engine.getClientData();
+        const data = scene.getClientData();
         for (let col = 100; col < 500; col += 50) {
             for (let row = 100; row < 500; row += 50) {
                 const sprite = scene.getSprite(`sprite_${row}_${col}`);
@@ -78,7 +79,7 @@ import atlas from './img/atlas.js';
     // process key events
     function procKeyEvents(engine, scene, e, eventType) {
         const KEY_ARROW_KEYS = [engine.KEY_SYMBOL_LEFT, engine.KEY_SYMBOL_RIGHT, engine.KEY_SYMBOL_UP, engine.KEY_SYMBOL_DOWN];
-        const data = engine.getClientData();
+        const data = scene.getClientData();
         const eventKey = e.key;
         // check arrow keys
         if (KEY_ARROW_KEYS.indexOf(eventKey) >= 0) {
@@ -88,7 +89,7 @@ import atlas from './img/atlas.js';
         if (eventKey === engine.KEY_SYMBOL_SPACE) {
             data.spaceKeyDownStatus = (eventType === engine.EVENT_TYPE_KEYDOWN);
         }
-        engine.setClientData(data);
+        scene.setClientData(data);
     }
 
     // process mouse click
