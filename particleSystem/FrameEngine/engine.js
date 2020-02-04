@@ -153,7 +153,7 @@ export default class {
         if (texture) {
             ctx.save();
             ctx.translate(x, y);
-            ctx.rotate((texture.rotate + rotate)* Math.PI/180);
+            ctx.rotate((texture.rotate + rotate) * Math.PI / 180);
             ctx.drawImage(texture.image,
                 texture.x, texture.y, texture.width, texture.height,
                 -texture.anchor.x, -texture.anchor.y, texture.width, texture.height);
@@ -197,6 +197,7 @@ export default class {
         });
         // draw particles
         currentScene.particles.forEach(particle => particle.update(this, delta));
+        // draw fps
         if (this.displayFps) {
             const fps = (1/delta).toFixed(1);
             ctx.save();
@@ -205,6 +206,7 @@ export default class {
             ctx.fillText(fps+' fps', 10, 10);
             ctx.restore();
         }
+        // render off screen canvas if using
         if (this.offScreenCanvas) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.drawImage(this.offScreenCanvas,
