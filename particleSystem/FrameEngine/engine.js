@@ -18,6 +18,10 @@ export default class {
     // data
     clientData = {};
 
+    // Scenes
+    scenes = [];
+    currentSceneIndex = null;
+
     // canvas as backing store data
     /** @type HTMLCanvasElement */
     offScreenCanvas = null;
@@ -49,68 +53,78 @@ export default class {
     getCtx = () => (this.offScreenCtx ? this.offScreenCtx : this.ctx);
     setDisplayFps = (displayFps) => {this.displayFps = displayFps};
 
-    // set user-update handler
-    updateHandler = () => {};
-    setUpdateHandler(handler) {
-        this.updateHandler = handler;
+    // add scene
+    addScene(scene) {
+        this.scenes.push(scene);
     }
 
-    // add sprite to array
-    sprites = {};
-    spriteMap = {};
-    addSprite(sprite) {
-        if (!this.sprites[sprite.layerNo]) {
-            this.sprites[sprite.layerNo] = {};
+    // get scene
+    getScene(index) {
+        return this.scenes[index];
+    }
+
+    // get current scene
+    getCurrentScene() {
+        return this.scenes[this.currentSceneIndex];
+    }
+
+    // get current scene index
+    getCurrentSceneIndex() {
+        return this.currentSceneIndex;
+    }
+
+    // change scene
+    changeScene(index, useTransition=true) {
+        // remove event listeners
+        if (this.currentSceneIndex !== null) {
+            this.removeSceneEventHandlers(this.currentSceneIndex);
+            if (useTransition) {
+                // TODO implement transition
+                console.log('changing scene: #'+this.currentSceneIndex+' to #'+index);
+            }
         }
-        if(!this.sprites[sprite.layerNo][sprite.tag] && !this.spriteMap[sprite.tag]) {
-            this.sprites[sprite.layerNo][sprite.tag] = sprite;
-            this.spriteMap[sprite.tag] = sprite;
-        } else {
-            console.log(`sprite tag name ${sprite.tag} already exits`);
+        this.currentSceneIndex = index;
+        // add event listener
+        this.addSceneEventHandlers(this.currentSceneIndex);
+    }
+
+    // change scene specified by tag
+    changeSceneByTag(tag, useTransition=true) {
+        for (let index = 0; index < this.scenes.length; index++) {
+            if (this.scenes[index].tag === tag) {
+                this.changeScene(index, useTransition);
+                break;
+            }
         }
     }
 
-    // remove sprite
-    removeSprite(tag) {
-        const layerNos = Object.keys(this.sprites);
-        let emptyLayerNo = -1;
-        layerNos.forEach(layerNo => {
-            if (this.sprites[layerNo][tag] && this.spriteMap[tag]) {
-                delete this.sprites[layerNo][tag];
-                delete this.spriteMap[tag];
-            } else {
-                console.log(`sprite tag name ${tag} does not exist`);
-            }
-            if (this.sprites[layerNo].length === 0) {
-                emptyLayerNo = layerNo;
-            }
+    // add event handlers to canvas by scene index
+    addSceneEventHandlers(sceneIndex) {
+        this.scenes[sceneIndex].eventListeners.forEach((eventListener, index) => {
+            this.canvas.addEventListener(eventListener.type,
+                e => {
+                    eventListener.listener(this, this.scenes[sceneIndex], e, eventListener.type);
+                    e.preventDefault();
+                },
+                eventListener.useCapture
+            );
+            this.scenes[sceneIndex].activeEventListenerIndices.push(index);
         });
-        if (emptyLayerNo >= 0) {
-            delete this.sprites[emptyLayerNo];
-        }
     }
 
-    // get sprite
-    getSprite(tag) {
-        return this.spriteMap[tag] || null;
-    }
-
-    // add particle
-    particles = [];
-    addParticle(particle) {
-        this.particles.push(particle);
+    // remove event handlers to canvas by scene index
+    removeSceneEventHandlers(sceneIndex) {
+        this.scenes[sceneIndex].activeEventListenerIndices.forEach(index => {
+            const eventListener = this.scenes[sceneIndex].eventListeners[index];
+            this.canvas.removeEventListener(eventListener.type, eventListener.listener, eventListener.useCapture)
+        });
+        this.scenes[sceneIndex].activeEventListenerIndices = [];
     }
 
     // set event handler
     EVENT_TYPE_KEYDOWN = 'keydown';
     EVENT_TYPE_KEYUP = 'keyup';
     EVENT_TYPE_CLICK = 'click';
-    setEventHandler(type, handler) {
-        this.canvas.addEventListener(type, e => {
-            handler(this, e, type);
-            e.preventDefault();
-        }, false);
-    }
 
     // start updating canvas frame
     startFrame () {
@@ -172,16 +186,17 @@ export default class {
         const delta = this.lastMilliSec ? currentMilliSec - this.lastMilliSec : 0;
         const ctx = (this.offScreenCtx ? this.offScreenCtx : this.ctx);
         this.lastMilliSec = currentMilliSec;
+        const currentScene = this.scenes[this.currentSceneIndex];
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.updateHandler(this, delta);
+        currentScene.updateHandler(this, currentScene, delta);
         // draw sprites
-        const spriteLayerNos = Object.keys(this.sprites);
+        const spriteLayerNos = Object.keys(currentScene.sprites);
         spriteLayerNos.forEach(layerNo => {
-            const spriteTags = Object.keys(this.sprites[layerNo]);
-            spriteTags.forEach(spriteTag => this.sprites[layerNo][spriteTag].draw());
+            const spriteTags = Object.keys(currentScene.sprites[layerNo]);
+            spriteTags.forEach(spriteTag => currentScene.sprites[layerNo][spriteTag].draw());
         });
         // draw particles
-        this.particles.forEach(particle => particle.update(this, delta));
+        currentScene.particles.forEach(particle => particle.update(this, delta));
         if (this.displayFps) {
             const fps = (1/delta).toFixed(1);
             ctx.save();
@@ -230,12 +245,61 @@ export class Sprite {
 }
 
 export class Scene {
-    sprites = [];
-    particleSystems = [];
     tag = null;
+    eventListeners = [];
+    activeEventListenerIndices = [];
+    updateHandler = () => {};
 
-    // update frame
-    update(delta) {
-
+    // add sprite to array
+    sprites = {};
+    spriteMap = {};
+    addSprite(sprite) {
+        if (!this.sprites[sprite.layerNo]) {
+            this.sprites[sprite.layerNo] = {};
+        }
+        if(!this.sprites[sprite.layerNo][sprite.tag] && !this.spriteMap[sprite.tag]) {
+            this.sprites[sprite.layerNo][sprite.tag] = sprite;
+            this.spriteMap[sprite.tag] = sprite;
+        } else {
+            console.log(`sprite tag name ${sprite.tag} already exits`);
+        }
     }
+
+    // remove sprite
+    removeSprite(tag) {
+        const layerNos = Object.keys(this.sprites);
+        let emptyLayerNo = -1;
+        layerNos.forEach(layerNo => {
+            if (this.sprites[layerNo][tag] && this.spriteMap[tag]) {
+                delete this.sprites[layerNo][tag];
+                delete this.spriteMap[tag];
+            } else {
+                console.log(`sprite tag name ${tag} does not exist`);
+            }
+            if (this.sprites[layerNo].length === 0) {
+                emptyLayerNo = layerNo;
+            }
+        });
+        if (emptyLayerNo >= 0) {
+            delete this.sprites[emptyLayerNo];
+        }
+    }
+
+    // get sprite
+    getSprite(tag) {
+        return this.spriteMap[tag] || null;
+    }
+
+    // add particle
+    particles = [];
+    addParticle(particle) {
+        this.particles.push(particle);
+    }
+
+    // add event listener
+    addEventListener(type, listener, useCapture, tag=null) {
+        this.eventListeners.push({type: type, listener: listener, useCapture: useCapture});
+    }
+
+    // TODO: implement removing particle
 }

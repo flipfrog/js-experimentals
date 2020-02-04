@@ -1,10 +1,11 @@
-import FrameEngine, {Sprite} from "./FrameEngine/engine.js";
+import FrameEngine, {Scene, Sprite} from "./FrameEngine/engine.js";
 import {ExplosionParticleSystem} from './FrameEngine/particle.js';
 import atlas from './img/atlas.js';
 
 (function(){
     // create engines on each canvas
     [1, 2].forEach(index => {
+        // create frame rendering engine
         const engine = new FrameEngine();
         engine.setCanvas('canvas_'+index, (index === 1));
         engine.setDisplayFps(true);
@@ -13,33 +14,40 @@ import atlas from './img/atlas.js';
             arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
             spaceKeyDownStatus: false
         });
-
+        // create scene
+        const scene = new Scene();
         // create sprites
         for (let col = 100; col < 500; col += 50) {
             for (let row = 100; row < 500; row += 50) {
                 const sprite = new Sprite(engine, 'pengo_2.png', 0, `sprite_${row}_${col}`);
                 sprite.setPosition(row, col);
-                engine.addSprite(sprite);
+                scene.addSprite(sprite);
             }
         }
+        // add event handlers
+        scene.eventListeners = [
+            {type: engine.EVENT_TYPE_KEYDOWN, listener: procKeyEvents, useCapture: false},
+            {type: engine.EVENT_TYPE_KEYUP, listener: procKeyEvents, useCapture: false},
+            {type: engine.EVENT_TYPE_CLICK, listener: procMouseClick, useCapture: false},
+        ];
+        scene.updateHandler = update;
 
-        // register event handlers
-        engine.setUpdateHandler(update);
-        engine.setEventHandler(engine.EVENT_TYPE_KEYDOWN, procKeyEvents);
-        engine.setEventHandler(engine.EVENT_TYPE_KEYUP, procKeyEvents);
-        engine.setEventHandler(engine.EVENT_TYPE_CLICK, procMouseClick);
-        // create sprites
+        // add scene to engine and change scene to just crated
+        engine.addScene(scene);
+        engine.changeScene(0);
+
+        // load sprite textures then start frame rendering
         engine.loadTextureAtlas(atlas)
             .then(() => engine.startFrame());
     });
 
     // update canvas
-    function update(engine, delta) {
+    function update(engine, scene, delta) {
         const canvas = engine.getCanvas();
         const data = engine.getClientData();
         for (let col = 100; col < 500; col += 50) {
             for (let row = 100; row < 500; row += 50) {
-                const sprite = engine.getSprite(`sprite_${row}_${col}`);
+                const sprite = scene.getSprite(`sprite_${row}_${col}`);
                 if (sprite) {
                     let x = sprite.x;
                     let y = sprite.y;
@@ -67,7 +75,7 @@ import atlas from './img/atlas.js';
     }
 
     // process key events
-    function procKeyEvents(engine, e, eventType) {
+    function procKeyEvents(engine, scene, e, eventType) {
         const KEY_ARROW_KEYS = [engine.KEY_SYMBOL_LEFT, engine.KEY_SYMBOL_RIGHT, engine.KEY_SYMBOL_UP, engine.KEY_SYMBOL_DOWN];
         const data = engine.getClientData();
         const eventKey = e.key;
@@ -83,15 +91,15 @@ import atlas from './img/atlas.js';
     }
 
     // process mouse click
-    function procMouseClick(engine, e) {
+    function procMouseClick(engine, scene, e) {
         const rect = e.target.getBoundingClientRect();
-        const sprite = engine.getSprite('sprite_100_100');
+        const sprite = scene.getSprite('sprite_100_100');
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         sprite.setPosition(x, y, sprite.rotate);
-        if (engine.getSprite('sprite_150_100')) {
-            engine.removeSprite('sprite_150_100');
+        if (scene.getSprite('sprite_150_100')) {
+            scene.removeSprite('sprite_150_100');
         }
-        engine.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
+        scene.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
     }
 })();
