@@ -54,6 +54,7 @@ export default class {
 
     // add scene
     addScene(scene) {
+        scene.index = this.scenes.length;
         this.scenes.push(scene);
     }
 
@@ -74,17 +75,20 @@ export default class {
 
     // change scene
     changeScene(index, useTransition=true) {
-        // remove event listeners
-        if (this.currentSceneIndex !== null) {
-            this.removeSceneEventHandlers(this.currentSceneIndex);
-            if (useTransition) {
-                // TODO implement transition
-                console.log('changing scene: #'+this.currentSceneIndex+' to #'+index);
+        if (index !== this.currentSceneIndex) {
+            console.log('changing scene to #'+index);
+            // remove event listeners
+            if (this.currentSceneIndex !== null) {
+                this.removeSceneEventHandlers(this.currentSceneIndex);
+                if (useTransition) {
+                    // TODO implement transition
+                    console.log('changing scene: #'+this.currentSceneIndex+' to #'+index);
+                }
             }
+            this.currentSceneIndex = index;
+            // add event listener
+            this.addSceneEventHandlers(this.currentSceneIndex);
         }
-        this.currentSceneIndex = index;
-        // add event listener
-        this.addSceneEventHandlers(this.currentSceneIndex);
     }
 
     // change scene specified by tag
@@ -100,13 +104,13 @@ export default class {
     // add event handlers to canvas by scene index
     addSceneEventHandlers(sceneIndex) {
         this.scenes[sceneIndex].eventListeners.forEach((eventListener, index) => {
-            this.canvas.addEventListener(eventListener.type,
-                e => {
-                    eventListener.listener(this, this.scenes[sceneIndex], e, eventListener.type);
-                    e.preventDefault();
-                },
-                eventListener.useCapture
-            );
+            const wrappedEventListener = e => {
+                eventListener.listener(this, this.scenes[sceneIndex], e, eventListener.type);
+                e.preventDefault();
+            };
+            console.log('add event listener:'+eventListener.type+' on #'+sceneIndex);
+            this.canvas.addEventListener(eventListener.type, wrappedEventListener, eventListener.useCapture);
+            this.scenes[sceneIndex].wrappedEventListeners.push(wrappedEventListener); // TODO: to be more simple
             this.scenes[sceneIndex].activeEventListenerIndices.push(index);
         });
     }
@@ -115,7 +119,9 @@ export default class {
     removeSceneEventHandlers(sceneIndex) {
         this.scenes[sceneIndex].activeEventListenerIndices.forEach(index => {
             const eventListener = this.scenes[sceneIndex].eventListeners[index];
-            this.canvas.removeEventListener(eventListener.type, eventListener.listener, eventListener.useCapture)
+            const wrappedEventListener = this.scenes[sceneIndex].wrappedEventListeners[index]; // TODO: to be more simple
+            console.log('remove event listener:'+eventListener.type+' on #'+sceneIndex);
+            this.canvas.removeEventListener(eventListener.type, wrappedEventListener, eventListener.useCapture)
         });
         this.scenes[sceneIndex].activeEventListenerIndices = [];
     }
@@ -194,8 +200,9 @@ export default class {
             const spriteTags = Object.keys(currentScene.sprites[layerNo]);
             spriteTags.forEach(spriteTag => currentScene.sprites[layerNo][spriteTag].draw());
         });
-        // draw particles
-        currentScene.particles.forEach(particle => particle.update(this, delta));
+        // draw particles TODO: delegate it to scene class
+        //currentScene.particles.forEach(particle => particle.update(this, delta));
+        currentScene.updateParticles(delta);
         // draw fps
         if (this.displayFps) {
             const fps = (1/delta).toFixed(1);
@@ -246,14 +253,21 @@ export class Sprite {
 }
 
 export class Scene {
+    engine = null;
     tag = null;
+    index = null;
     // data
     clientData = {};
     // event listeners
     eventListeners = [];
+    wrappedEventListeners = [];
     activeEventListenerIndices = [];
     // frame update handler
     updateHandler = () => {};
+
+    constructor(engine) {
+        this.engine = engine;
+    }
 
     // set and get client data
     setClientData(data) {
@@ -307,9 +321,10 @@ export class Scene {
         this.particles.push(particle);
     }
 
-    // add event listener
-    addEventListener(type, listener, useCapture, tag=null) {
-        this.eventListeners.push({type: type, listener: listener, useCapture: useCapture});
+    // update and draw particle frame
+    updateParticles(delta) {
+        this.particles = this.particles.filter(particle => particle.inProgress);
+        this.particles.forEach(particle => particle.updateAndDraw(this.engine, delta));
     }
 
     // TODO: implement removing particle

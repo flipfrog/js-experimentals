@@ -6,6 +6,7 @@ class ParticleSystemBase {
     cx = 0;
     cy = 0;
     textureName = null;
+    inProgress = true;
     options = {
         duration: 2, // sec
         radius: 50, // px
@@ -23,12 +24,15 @@ class ParticleSystemBase {
         [this.cx, this.cy, this.textureName] = [cx, cy, textureName];
     }
     // update textures
-    update(engine, delta) {
+    updateAndDraw(engine, delta) {
         this.textures = this.textures.filter(texture => {
             return texture.t < this.options.duration;
         });
-        this.textures.forEach(texture => texture.updateCoordinate(delta));
-        this.textures.forEach(texture => texture.draw(engine));
+        this.inProgress = (this.textures.length > 0);
+        if (this.inProgress) {
+            this.textures.forEach(texture => texture.updateCoordinate(delta));
+            this.textures.forEach(texture => texture.draw(engine));
+        }
     }
 }
 

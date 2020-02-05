@@ -9,33 +9,37 @@ import atlas from './img/atlas.js';
         const engine = new FrameEngine();
         engine.setCanvas('canvas_'+index, (index === 1));
         engine.setDisplayFps(true);
-        // create scene
-        const scene = new Scene();
-        // set client data
-        scene.setClientData({
-            pps: 20,
-            arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
-            spaceKeyDownStatus: false
-        });
-        // create sprites
-        for (let col = 100; col < 500; col += 50) {
-            for (let row = 100; row < 500; row += 50) {
-                const sprite = new Sprite(engine, 'pengo_2.png', 0, `sprite_${row}_${col}`);
-                sprite.setPosition(row, col);
-                scene.addSprite(sprite);
+        // create scenes
+        ['pengo_2.png', 'pengo_1.5.png'].forEach((textureName) => {
+            const scene = new Scene(engine);
+            // set client data
+            scene.setClientData({
+                pps: 20,
+                arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
+                spaceKeyDownStatus: false
+            });
+            // create sprites
+            for (let col = 100; col <= 100; col += 50) {
+                for (let row = 100; row <= 100; row += 50) {
+                    const sprite = new Sprite(engine, textureName, 0, `sprite_${row}_${col}`);
+                    sprite.setPosition(row, col);
+                    scene.addSprite(sprite);
+                }
             }
-        }
-        // add event listeners
-        scene.eventListeners = [
-            {type: engine.EVENT_TYPE_KEYDOWN, listener: procKeyEvents, useCapture: false},
-            {type: engine.EVENT_TYPE_KEYUP, listener: procKeyEvents, useCapture: false},
-            {type: engine.EVENT_TYPE_CLICK, listener: procMouseClick, useCapture: false},
-        ];
-        // set frame update handler
-        scene.updateHandler = update;
+            // add event listeners
+            scene.eventListeners = [
+                {type: engine.EVENT_TYPE_KEYDOWN, listener: procKeyEvents, useCapture: false},
+                {type: engine.EVENT_TYPE_KEYUP, listener: procKeyEvents, useCapture: false},
+                {type: engine.EVENT_TYPE_CLICK, listener: procMouseClick, useCapture: false},
+            ];
+            // set frame update handler
+            scene.updateHandler = update;
 
-        // add scene to engine and change scene to just crated
-        engine.addScene(scene);
+            // add scene to engine and change scene to just crated
+            engine.addScene(scene);
+        });
+
+        // change to the first scene
         engine.changeScene(0);
 
         // load sprite textures then start frame rendering
@@ -47,8 +51,8 @@ import atlas from './img/atlas.js';
     function update(engine, scene, delta) {
         const canvas = engine.getCanvas();
         const data = scene.getClientData();
-        for (let col = 100; col < 500; col += 50) {
-            for (let row = 100; row < 500; row += 50) {
+        for (let col = 100; col <= 100; col += 50) {
+            for (let row = 100; row <= 100; row += 50) {
                 const sprite = scene.getSprite(`sprite_${row}_${col}`);
                 if (sprite) {
                     let x = sprite.x;
@@ -95,13 +99,19 @@ import atlas from './img/atlas.js';
     // process mouse click
     function procMouseClick(engine, scene, e) {
         const rect = e.target.getBoundingClientRect();
-        const sprite = scene.getSprite('sprite_100_100');
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        sprite.setPosition(x, y, sprite.rotate);
-        if (scene.getSprite('sprite_150_100')) {
-            scene.removeSprite('sprite_150_100');
+        if (x < 100 && y < 100) {
+            engine.changeScene((scene.index+1) % 2);
+        } else {
+            const sprite = scene.getSprite('sprite_100_100');
+            if (sprite) {
+                sprite.setPosition(x, y, sprite.rotate);
+            }
+            if (scene.getSprite('sprite_150_100')) {
+                scene.removeSprite('sprite_150_100');
+            }
+            scene.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
         }
-        scene.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
     }
 })();

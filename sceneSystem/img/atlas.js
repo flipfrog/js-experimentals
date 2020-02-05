@@ -12,9 +12,9 @@ export default [
                 anchor: {x: 10, y: 10}
             },
             {
-                name: 'partial_12.png',
-                x: 20,
-                y: 0,
+                name: 'pengo_1.5.png',
+                x: 60,
+                y: 60,
                 width: 20,
                 height: 20,
                 rotate: 0,
