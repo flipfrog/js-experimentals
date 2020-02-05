@@ -79,15 +79,12 @@ export default class {
             console.log('changing scene to #'+index);
             // remove event listeners
             if (this.currentSceneIndex !== null) {
-                this.removeSceneEventHandlers(this.currentSceneIndex);
                 if (useTransition) {
                     // TODO implement transition
                     console.log('changing scene: #'+this.currentSceneIndex+' to #'+index);
                 }
             }
             this.currentSceneIndex = index;
-            // add event listener
-            this.addSceneEventHandlers(this.currentSceneIndex);
         }
     }
 
@@ -101,31 +98,6 @@ export default class {
         }
     }
 
-    // add event handlers to canvas by scene index
-    addSceneEventHandlers(sceneIndex) {
-        this.scenes[sceneIndex].eventListeners.forEach((eventListener, index) => {
-            const wrappedEventListener = e => {
-                eventListener.listener(this, this.scenes[sceneIndex], e, eventListener.type);
-                e.preventDefault();
-            };
-            console.log('add event listener:'+eventListener.type+' on #'+sceneIndex);
-            this.canvas.addEventListener(eventListener.type, wrappedEventListener, eventListener.useCapture);
-            this.scenes[sceneIndex].wrappedEventListeners.push(wrappedEventListener); // TODO: to be more simple
-            this.scenes[sceneIndex].activeEventListenerIndices.push(index);
-        });
-    }
-
-    // remove event handlers to canvas by scene index
-    removeSceneEventHandlers(sceneIndex) {
-        this.scenes[sceneIndex].activeEventListenerIndices.forEach(index => {
-            const eventListener = this.scenes[sceneIndex].eventListeners[index];
-            const wrappedEventListener = this.scenes[sceneIndex].wrappedEventListeners[index]; // TODO: to be more simple
-            console.log('remove event listener:'+eventListener.type+' on #'+sceneIndex);
-            this.canvas.removeEventListener(eventListener.type, wrappedEventListener, eventListener.useCapture)
-        });
-        this.scenes[sceneIndex].activeEventListenerIndices = [];
-    }
-
     // set event handler
     EVENT_TYPE_KEYDOWN = 'keydown';
     EVENT_TYPE_KEYUP = 'keyup';
@@ -133,7 +105,19 @@ export default class {
 
     // start updating canvas frame
     startFrame () {
+        this.canvas.addEventListener(this.EVENT_TYPE_KEYDOWN, this.eventListenerIn.bind(this), false);
+        this.canvas.addEventListener(this.EVENT_TYPE_KEYUP, this.eventListenerIn.bind(this), false);
+        this.canvas.addEventListener(this.EVENT_TYPE_CLICK, this.eventListenerIn.bind(this), false);
         requestAnimationFrame(this.drawFrame.bind(this));
+    }
+
+    // event listener which calls user event listeners
+    eventListenerIn(e) {
+        const scene = this.scenes[this.currentSceneIndex];
+        if (scene) {
+            scene.eventListener(this, scene, e);
+        }
+        e.preventDefault()
     }
 
     // create texture atlas data structure from control file(js file)
@@ -262,6 +246,8 @@ export class Scene {
     eventListeners = [];
     wrappedEventListeners = [];
     activeEventListenerIndices = [];
+    // event listener
+    eventListener = () => {};
     // frame update handler
     updateHandler = () => {};
 

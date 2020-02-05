@@ -26,14 +26,11 @@ import atlas from './img/atlas.js';
                     scene.addSprite(sprite);
                 }
             }
-            // add event listeners
-            scene.eventListeners = [
-                {type: engine.EVENT_TYPE_KEYDOWN, listener: procKeyEvents, useCapture: false},
-                {type: engine.EVENT_TYPE_KEYUP, listener: procKeyEvents, useCapture: false},
-                {type: engine.EVENT_TYPE_CLICK, listener: procMouseClick, useCapture: false},
-            ];
             // set frame update handler
             scene.updateHandler = update;
+
+            // set event listener
+            scene.eventListener = eventListener;
 
             // add scene to engine and change scene to just crated
             engine.addScene(scene);
@@ -77,6 +74,19 @@ import atlas from './img/atlas.js';
                     sprite.setPosition(x, y, rotate);
                 }
             }
+        }
+    }
+
+    // event listener
+    function eventListener(engine, scene, e) { // FIXME: it causes timing problems after soon changing scenes?
+        switch (e.type) {
+            case engine.EVENT_TYPE_KEYDOWN:
+            case engine.EVENT_TYPE_KEYUP:
+                procKeyEvents(engine, scene, e, e.type);
+                break;
+            case engine.EVENT_TYPE_CLICK:
+                procMouseClick(engine, scene, e);
+                break;
         }
     }
 
