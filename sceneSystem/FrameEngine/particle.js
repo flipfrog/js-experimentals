@@ -8,7 +8,7 @@ class ParticleSystemBase {
     textureName = null;
     inProgress = true;
     options = {
-        duration: 2, // sec
+        duration: 2, // sec (zero to infinite duration)
         radius: 50, // px
         initialAlpha: 1,
         numTextures: 30,
@@ -26,7 +26,7 @@ class ParticleSystemBase {
     // update textures
     updateAndDraw(engine, delta) {
         this.textures = this.textures.filter(texture => {
-            return texture.t < this.options.duration;
+            return this.options.duration === 0 || texture.t < this.options.duration;
         });
         this.inProgress = (this.textures.length > 0);
         if (this.inProgress) {
