@@ -19,8 +19,8 @@ import atlas from './img/atlas.js';
                 spaceKeyDownStatus: false
             });
             // create sprites
-            for (let col = 100; col <= 100; col += 50) {
-                for (let row = 100; row <= 100; row += 50) {
+            for (let col = 100; col <= 200; col += 50) {
+                for (let row = 100; row <= 200; row += 50) {
                     const sprite = new Sprite(engine, textureName, 0, `sprite_${row}_${col}`);
                     sprite.setPosition(row, col);
                     scene.addSprite(sprite);
@@ -48,8 +48,8 @@ import atlas from './img/atlas.js';
     function update(engine, scene, delta) {
         const canvas = engine.getCanvas();
         const data = scene.getClientData();
-        for (let col = 100; col <= 100; col += 50) {
-            for (let row = 100; row <= 100; row += 50) {
+        for (let col = 100; col <= 200; col += 50) {
+            for (let row = 100; row <= 200; row += 50) {
                 const sprite = scene.getSprite(`sprite_${row}_${col}`);
                 if (sprite) {
                     let x = sprite.x;
