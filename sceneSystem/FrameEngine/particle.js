@@ -67,7 +67,7 @@ class ParticleBase {
     }
     draw(engine) {
         const ctx = engine.getCtx();
-        engine.drawTexture(ctx, this.textureName, this.x, this.y, this.rotate); // TODO: to be using raw interface to get rendering speed up
+        engine.putDecayTexture(ctx, this.textureName, this.x, this.y, 7, this.rotate); // TODO: to be using raw interface to get rendering speed up
     }
 }
 

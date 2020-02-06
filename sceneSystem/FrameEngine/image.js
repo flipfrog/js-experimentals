@@ -23,7 +23,11 @@ export class DecayedImageGenerator {
                 generated.data[j+2] = this.imageData.data[j+2] * (1- intensityRate); // b
                 generated.data[j+3] = this.imageData.data[j+3]; // a
             }
-            yield {index: i, imageData: generated};
+            const canvas = document.createElement('canvas');
+            [canvas.width, canvas.height] = [this.imageData.width, this.imageData.height];
+            const ctx = canvas.getContext('2d');
+            ctx.putImageData(generated, 0, 0);
+            yield {index: i, canvas: canvas};
         }
     }
 }

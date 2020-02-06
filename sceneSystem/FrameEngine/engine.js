@@ -2,6 +2,8 @@
 // Frame Update Engine
 // It needs importing particle.js.
 //
+import {DecayedImageGenerator} from "./image.js";
+
 export default class {
     // literals
     VERSION = '1.0.0';
@@ -131,6 +133,13 @@ export default class {
         atlas.forEach((file, index) => {
             file.textures.forEach(texture => {
                 texture.image = images[index];
+                if (texture.intensityDecay) {
+                    texture.canvasArray = [];
+                    const generator = new DecayedImageGenerator(texture.image);
+                    for (let imageData of generator.generateImages(texture.intensityDecay)) {
+                        texture.canvasArray.push(imageData.canvas);
+                    }
+                }
                 this.textureMap[texture.name] = texture;
             });
         });
@@ -144,6 +153,20 @@ export default class {
             ctx.translate(x, y);
             ctx.rotate((texture.rotate + rotate) * Math.PI / 180);
             ctx.drawImage(texture.image,
+                texture.x, texture.y, texture.width, texture.height,
+                -texture.anchor.x, -texture.anchor.y, texture.width, texture.height);
+            ctx.restore();
+        }
+    }
+
+    // put intensity decayed image data to canvas
+    putDecayTexture(ctx, texturesName, x, y, index, rotate=0) {
+        const texture = this.textureMap[texturesName] || null;
+        if (texture) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate((texture.rotate + rotate) * Math.PI / 180);
+            ctx.drawImage(texture.canvasArray[index],
                 texture.x, texture.y, texture.width, texture.height,
                 -texture.anchor.x, -texture.anchor.y, texture.width, texture.height);
             ctx.restore();
