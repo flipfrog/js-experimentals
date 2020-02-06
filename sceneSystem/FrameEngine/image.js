@@ -12,7 +12,7 @@ export class DecayedImageGenerator {
         image.style.display = 'none';
         this.imageData = this.ctx.getImageData(0, 0, image.width, image.height);
     }
-    *getDecayedIntensityCanvasImages(numIntensityDecayLevels) {
+    *generateImages(numIntensityDecayLevels) {
         const intensityStep = 1/numIntensityDecayLevels;
         for (let i = 0; i < numIntensityDecayLevels; i++) {
             const intensityRate = intensityStep * i;
