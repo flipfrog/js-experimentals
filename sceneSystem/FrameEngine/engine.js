@@ -122,7 +122,6 @@ export default class {
 
     // create texture atlas data structure from control file(js file)
     // TODO: add textures' border-area
-    // TODO: adding texture atlas info file adaptor base
     textureMap = {};
     async loadTextureAtlas(atlas) {
         const imageFiles = atlas.map(file => file.imageFile);
