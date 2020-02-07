@@ -32,7 +32,11 @@ class ParticleSystemBase {
         if (this.inProgress) {
             const canvasArrayMaxIndex = engine.textureMap[this.textureName].canvasArray.length - 1;
             this.textures.forEach(texture => texture.updateCoordinate(delta));
+            const ctx = engine.getCtx();
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter'; // set blend mode
             this.textures.forEach(texture => texture.draw(engine, Math.floor((texture.t/this.options.duration)*canvasArrayMaxIndex)));
+            ctx.restore();
         }
     }
 }
