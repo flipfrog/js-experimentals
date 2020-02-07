@@ -133,6 +133,7 @@ export default class {
         atlas.forEach((file, index) => {
             file.textures.forEach(texture => {
                 texture.image = images[index];
+                // make decayed intensity images if needed
                 if (texture.intensityDecay) {
                     texture.canvasArray = [];
                     const generator = new DecayedImageGenerator(texture.image);

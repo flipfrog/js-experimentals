@@ -8,7 +8,7 @@ class ParticleSystemBase {
     textureName = null;
     inProgress = true;
     options = {
-        duration: 2, // sec (zero to infinite duration)
+        duration: 1, // sec (zero to infinite duration)
         radius: 50, // px
         initialAlpha: 1,
         numTextures: 30,
@@ -30,8 +30,9 @@ class ParticleSystemBase {
         });
         this.inProgress = (this.textures.length > 0);
         if (this.inProgress) {
+            const canvasArrayMaxIndex = engine.textureMap[this.textureName].canvasArray.length - 1;
             this.textures.forEach(texture => texture.updateCoordinate(delta));
-            this.textures.forEach(texture => texture.draw(engine));
+            this.textures.forEach(texture => texture.draw(engine, Math.floor((texture.t/this.options.duration)*canvasArrayMaxIndex)));
         }
     }
 }
@@ -65,9 +66,10 @@ class ParticleBase {
     updateCoordinate(delta) {
         this.t += delta;
     }
-    draw(engine) {
+    draw(engine, intensityDecayIndex) {
         const ctx = engine.getCtx();
-        engine.putDecayTexture(ctx, this.textureName, this.x, this.y, 7, this.rotate); // TODO: to be using raw interface to get rendering speed up
+        // TODO: to be using raw interface to get rendering speed up
+        engine.putDecayTexture(ctx, this.textureName, this.x, this.y, intensityDecayIndex, this.rotate);
     }
 }
 

@@ -7,6 +7,7 @@ export class DecayedImageGenerator {
     ctx = null;
     constructor(image) {
         this.canvas = document.createElement('canvas');
+        [this.canvas.width, this.canvas.height] = [image.width, image.height];
         this.ctx = this.canvas.getContext('2d');
         this.ctx.drawImage(image, 0, 0);
         image.style.display = 'none';
