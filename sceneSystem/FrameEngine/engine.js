@@ -118,8 +118,11 @@ export default class {
     eventListenerIn(e) {
         const scene = this.scenes[this.currentSceneIndex];
         if (scene) {
-            scene.eventListener(this, scene, e);
-            scene.uiObjects.forEach(uiObject => uiObject.eventListener(this, e));
+            // process ui object events primarily
+            const processed = scene.uiObjects.reduce((acc, uiObject) => {return acc || uiObject.eventListener(this, scene, e)}, false);
+            if (!processed) {
+                scene.eventListener(this, scene, e);
+            }
         }
         e.preventDefault()
     }

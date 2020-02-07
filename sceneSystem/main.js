@@ -35,7 +35,7 @@ import atlas from './img/atlas.js';
 
             // add button
             const button = new UIButton(engine, 150, 100, 'Change Scene');
-            button.setEventListener(() => console.log('clicked button.'));
+            button.setEventListener((engine, scene, e) => engine.changeScene((scene.index+1) % 2));
             scene.addUIObject(button);
 
             // add scene to engine and change scene to just crated
@@ -117,17 +117,13 @@ import atlas from './img/atlas.js';
         const rect = e.target.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        if (x < 100 && y < 100) {
-            engine.changeScene((scene.index+1) % 2);
-        } else {
-            const sprite = scene.getSprite('sprite_100_100');
-            if (sprite) {
-                sprite.setPosition(x, y, sprite.rotate);
-            }
-            if (scene.getSprite('sprite_150_100')) {
-                scene.removeSprite('sprite_150_100');
-            }
-            scene.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
+        const sprite = scene.getSprite('sprite_100_100');
+        if (sprite) {
+            sprite.setPosition(x, y, sprite.rotate);
         }
+        if (scene.getSprite('sprite_150_100')) {
+            scene.removeSprite('sprite_150_100');
+        }
+        scene.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
     }
 })();

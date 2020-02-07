@@ -15,15 +15,17 @@ export class UIBase {
     }
     computeGeometry = () => {};
     draw = () => {};
-    eventListener(engine, e) {
+    eventListener(engine, scene, e) {
         if (e.type === engine.EVENT_TYPE_CLICK) {
             const rect = e.target.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             if (this.geometry.isContained(x, y)) {
-                this.userEventListener(this);
+                this.userEventListener(engine, scene, e);
+                return true;
             }
         }
+        return false;
     }
     setEventListener(listener) {
         this.userEventListener = listener;
