@@ -1,5 +1,6 @@
 import FrameEngine, {Scene, Sprite} from "./FrameEngine/engine.js";
 import {ExplosionParticleSystem} from './FrameEngine/particle.js';
+import {UIButton} from './FrameEngine/ui.js';
 import atlas from './img/atlas.js';
 
 (function(){
@@ -31,6 +32,11 @@ import atlas from './img/atlas.js';
 
             // set event listener
             scene.eventListener = eventListener;
+
+            // add button
+            const button = new UIButton(engine, 150, 100, 'Change Scene');
+            button.setEventListener(() => console.log('clicked button.'));
+            scene.addUIObject(button);
 
             // add scene to engine and change scene to just crated
             engine.addScene(scene);

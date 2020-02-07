@@ -3,6 +3,7 @@
 // It needs importing particle.js.
 //
 import {DecayedImageGenerator} from "./image.js";
+import {UIBase} from './ui.js';
 
 export default class {
     // literals
@@ -118,6 +119,7 @@ export default class {
         const scene = this.scenes[this.currentSceneIndex];
         if (scene) {
             scene.eventListener(this, scene, e);
+            scene.uiObjects.forEach(uiObject => uiObject.eventListener(this, e));
         }
         e.preventDefault()
     }
@@ -211,6 +213,7 @@ export default class {
         // draw particles TODO: delegate it to scene class
         //currentScene.particles.forEach(particle => particle.update(this, delta));
         currentScene.updateParticles(delta);
+        currentScene.updateUIObjects();
         // draw fps
         if (this.displayFps) {
             const fps = (1/delta).toFixed(1);
@@ -264,11 +267,12 @@ export class Scene {
     engine = null;
     tag = null;
     index = null;
+    /** @type UIBase[] */
+    uiObjects = [];
     // data
     clientData = {};
     // event listeners
     eventListeners = [];
-    wrappedEventListeners = [];
     activeEventListenerIndices = [];
     // event listener
     eventListener = () => {};
@@ -336,6 +340,15 @@ export class Scene {
         this.particles.forEach(particle => particle.updateAndDraw(this.engine, delta));
         // delete unused particles
         this.particles = this.particles.filter(particle => particle.inProgress);
+    }
+
+    updateUIObjects() {
+        this.uiObjects.forEach(uiObjects => uiObjects.draw());
+    }
+
+    // add UI object
+    addUIObject(uiObject) {
+        this.uiObjects.push(uiObject);
     }
 
     // TODO: implement removing particle
