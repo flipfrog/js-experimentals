@@ -35,7 +35,10 @@ class ParticleSystemBase {
             const ctx = engine.getCtx();
             ctx.save();
             ctx.globalCompositeOperation = 'lighter'; // set blend mode
-            this.textures.forEach(texture => texture.draw(engine, Math.floor((texture.t/this.options.duration)*canvasArrayMaxIndex)));
+            this.textures.forEach(texture => {
+                const index = Math.min(Math.floor((texture.t/this.options.duration)*canvasArrayMaxIndex), canvasArrayMaxIndex);
+                texture.draw(engine, index);
+            });
             ctx.restore();
         }
     }
