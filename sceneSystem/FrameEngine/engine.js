@@ -333,8 +333,9 @@ export class Scene {
 
     // update and draw particle frame
     updateParticles(delta) {
-        this.particles = this.particles.filter(particle => particle.inProgress);
         this.particles.forEach(particle => particle.updateAndDraw(this.engine, delta));
+        // delete unused particles
+        this.particles = this.particles.filter(particle => particle.inProgress);
     }
 
     // TODO: implement removing particle
