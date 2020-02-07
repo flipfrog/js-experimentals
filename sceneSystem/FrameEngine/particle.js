@@ -11,7 +11,7 @@ class ParticleSystemBase {
         duration: 1, // sec (zero to infinite duration)
         radius: 50, // px
         initialAlpha: 1,
-        numTextures: 30,
+        numInitialTextures: 30,
         angularVelocity: 0, // deg/sec for sprite rotation
     };
     textures = [];
@@ -47,7 +47,7 @@ class ParticleSystemBase {
 export class ExplosionParticleSystem extends ParticleSystemBase {
     constructor(cx, cy, textureName, options={}) {
         super(cx, cy, textureName, options);
-        for (let i = 0; i < this.options.numTextures; i++) {
+        for (let i = 0; i < this.options.numInitialTextures; i++) {
             const texture = new ExplosionParticle(this.cx, this.cy, this.textureName);
             this.textures.push(texture);
         }
