@@ -1,16 +1,13 @@
 export class DecayedImageGenerator {
-    /** @type ImageData */
-    imageData = null;
-    /** @type HTMLCanvasElement */
-    canvas = null;
-    /** @type CanvasRenderingContext2D */
-    ctx = null;
     constructor(image) {
+        /** @type HTMLCanvasElement */
         this.canvas = document.createElement('canvas');
         [this.canvas.width, this.canvas.height] = [image.width, image.height];
+        /** @type CanvasRenderingContext2D */
         this.ctx = this.canvas.getContext('2d');
         this.ctx.drawImage(image, 0, 0);
         image.style.display = 'none';
+        /** @type ImageData */
         this.imageData = this.ctx.getImageData(0, 0, image.width, image.height);
     }
     *generateImages(numIntensityDecayLevels) {

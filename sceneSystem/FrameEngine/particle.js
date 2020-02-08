@@ -3,21 +3,18 @@
 // Each particle implementations are extended from its base classes.
 //
 class ParticleSystemBase {
-    cx = 0;
-    cy = 0;
-    textureName = null;
-    inProgress = true;
-    options = {
-        duration: 1, // sec (zero to infinite duration)
-        radius: 50, // px
-        initialAlpha: 1,
-        numInitialTextures: 30,
-        angularVelocity: 0, // deg/sec for sprite rotation
-    };
-    textures = [];
     // initialize own parameters
     constructor(cx, cy, textureName, options={}) {
+        this.inProgress = true;
+        this.textures = [];
         // set specified option values
+        this.options = {
+            duration: 1, // sec (zero to infinite duration)
+            radius: 50, // px
+            initialAlpha: 1,
+            numInitialTextures: 30,
+            angularVelocity: 0, // deg/sec for sprite rotation
+        };
         Object.keys(this.options).forEach(key => {
             this.options[key] = (options[key] ? options[key] : this.options[key]);
         });
@@ -55,19 +52,16 @@ export class ExplosionParticleSystem extends ParticleSystemBase {
 }
 
 class ParticleBase {
-    t = 0;
-    x = 0;
-    y = 0;
-    initialVx = 0; // px/sec
-    initialVy = 0; // px/sec
-    vx = 0; // px/sec
-    vy = 0; // px/sec
-    rotate = 0;
-    vr = 0; // deg/sec
-    textureName = null;
-    baseVelocity = 10; // px/sec
-    fixedVelocityRatio = .5;
     constructor(cx, cy, textureName) {
+        this.t = 0;
+        this.initialVx = 0; // px/sec
+        this.initialVy = 0; // px/sec
+        this.vx = 0; // px/sec
+        this.vy = 0; // px/sec
+        this.rotate = 0;
+        this.vr = 0; // deg/sec
+        this.baseVelocity = 10; // px/sec
+        this.fixedVelocityRatio = .5;
         [this.x, this.y, this.textureName] = [cx, cy, textureName];
     }
     updateCoordinate(delta) {

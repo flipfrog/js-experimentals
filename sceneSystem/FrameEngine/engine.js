@@ -6,34 +6,43 @@ import {DecayedImageGenerator} from "./image.js";
 import {UIBase} from './ui.js';
 
 export default class {
-    // literals
-    VERSION = '1.0.0';
-    // key symbols for event handler
-    KEY_SYMBOL_LEFT = 'ArrowLeft';
-    KEY_SYMBOL_RIGHT = 'ArrowRight';
-    KEY_SYMBOL_UP = 'ArrowUp';
-    KEY_SYMBOL_DOWN = 'ArrowDown';
-    KEY_SYMBOL_SPACE = 'Space';
+    constructor() {
+        // literals
+        this.VERSION = '1.0.0';
+        // key symbols for event handler
+        this.KEY_SYMBOL_LEFT = 'ArrowLeft';
+        this.KEY_SYMBOL_RIGHT = 'ArrowRight';
+        this.KEY_SYMBOL_UP = 'ArrowUp';
+        this.KEY_SYMBOL_DOWN = 'ArrowDown';
+        this.KEY_SYMBOL_SPACE = 'Space';
 
-    // display fps
-    displayFps = false;
+        // display fps
+        this.displayFps = false;
 
-    // data
-    clientData = {};
+        // data
+        this.clientData = {};
 
-    // Scenes
-    scenes = [];
-    currentSceneIndex = null;
+        // Scenes
+        this.scenes = [];
+        this.currentSceneIndex = null;
 
-    // canvas as backing store data
-    /** @type HTMLCanvasElement */
-    offScreenCanvas = null;
-    offScreenCtx = null;
-    // set canvas
-    /** @type HTMLCanvasElement */
-    canvas = null;
-    /** @type CanvasRenderingContext2D */
-    ctx = null;
+        // canvas as backing store data
+        this.offScreenCanvas = null;
+        this.offScreenCtx = null;
+        // set canvas
+        /** @type HTMLCanvasElement */
+        this.canvas = null;
+        /** @type CanvasRenderingContext2D */
+        this.ctx = null;
+
+        // set event handler
+        this.EVENT_TYPE_KEYDOWN = 'keydown';
+        this.EVENT_TYPE_KEYUP = 'keyup';
+        this.EVENT_TYPE_CLICK = 'click';
+
+        this.textureMap = {};
+        this.lastMilliSec = null;
+    }
     setCanvas(canvasId, useOffScreenCanvas=false) {
         // set canvas and context
         this.canvas = document.getElementById(canvasId);
@@ -50,10 +59,18 @@ export default class {
     setClientData(data) {
         this.clientData = Object.assign({}, data);
     }
-    getClientData = () => this.clientData;
-    getCanvas = () => (this.offScreenCanvas ? this.offScreenCanvas : this.canvas);
-    getCtx = () => (this.offScreenCtx ? this.offScreenCtx : this.ctx);
-    setDisplayFps = (displayFps) => {this.displayFps = displayFps};
+    getClientData() {
+        return this.clientData;
+    }
+    getCanvas() {
+        return this.offScreenCanvas ? this.offScreenCanvas : this.canvas;
+    }
+    getCtx() {
+        return this.offScreenCtx ? this.offScreenCtx : this.ctx;
+    }
+    setDisplayFps(displayFps) {
+        this.displayFps = displayFps;
+    }
 
     // add scene
     addScene(scene) {
@@ -101,11 +118,6 @@ export default class {
         }
     }
 
-    // set event handler
-    EVENT_TYPE_KEYDOWN = 'keydown';
-    EVENT_TYPE_KEYUP = 'keyup';
-    EVENT_TYPE_CLICK = 'click';
-
     // start updating canvas frame
     startFrame () {
         this.canvas.addEventListener(this.EVENT_TYPE_KEYDOWN, this.eventListenerIn.bind(this), false);
@@ -129,7 +141,6 @@ export default class {
 
     // create texture atlas data structure from control file(js file)
     // TODO: add textures' border-area
-    textureMap = {};
     async loadTextureAtlas(atlas) {
         const imageFiles = atlas.map(file => file.imageFile);
         // load image for textures
@@ -198,7 +209,6 @@ export default class {
     }
 
     // draw frame which calls user-update handler function
-    lastMilliSec = null;
     drawFrame(currentTime) {
         const currentMilliSec = currentTime/1000;
         const delta = this.lastMilliSec ? currentMilliSec - this.lastMilliSec : 0;
@@ -238,13 +248,6 @@ export default class {
 };
 
 export class Sprite {
-    x = 0;
-    y = 0;
-    rotate = 0;
-    name = null;
-    layerNo = 0;
-    tag = null;
-
     /**
      * constructor
      * @param engine frame engine
@@ -257,44 +260,50 @@ export class Sprite {
         this.name = name;
         this.layerNo = layerNo;
         this.tag = tag;
+        this.x = 0;
+        this.y = 0;
+        this.rotate = 0;
     }
     // set sprite's position (and rotation)
     setPosition(x, y, rotate = 0) {
         [this.x, this.y, this.rotate] = [x, y, rotate];
     }
     // draw sprite
-    draw = () => this.engine.drawTexture(this.engine.getCtx(), this.name, this.x, this.y, this.rotate);
+    draw() {
+        this.engine.drawTexture(this.engine.getCtx(), this.name, this.x, this.y, this.rotate);
+    }
 }
 
 export class Scene {
-    engine = null;
-    tag = null;
-    index = null;
-    /** @type UIBase[] */
-    uiObjects = [];
-    // data
-    clientData = {};
-    // event listeners
-    eventListeners = [];
-    activeEventListenerIndices = [];
-    // event listener
-    eventListener = () => {};
-    // frame update handler
-    updateHandler = () => {};
-
     constructor(engine) {
         this.engine = engine;
+        this.tag = null;
+        this.index = null;
+        /** @type UIBase[] */
+        this.uiObjects = [];
+        // data
+        this.clientData = {};
+        // event listeners
+        this.eventListeners = [];
+        this.activeEventListenerIndices = [];
+        this.sprites = {};
+        this.spriteMap = {};
+        this.particles = [];
+        // event listener
+        this.eventListener = () => {};
+        // frame update handler
+        this.updateHandler = () => {};
     }
 
     // set and get client data
     setClientData(data) {
         this.clientData = Object.assign({}, data);
     }
-    getClientData = () => this.clientData;
+    getClientData() {
+        return this.clientData;
+    }
 
     // add sprite to array
-    sprites = {};
-    spriteMap = {};
     addSprite(sprite) {
         if (!this.sprites[sprite.layerNo]) {
             this.sprites[sprite.layerNo] = {};
@@ -333,7 +342,6 @@ export class Scene {
     }
 
     // add particle
-    particles = [];
     addParticle(particle) {
         this.particles.push(particle);
     }
