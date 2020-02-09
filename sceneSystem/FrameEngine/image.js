@@ -10,15 +10,17 @@ export class DecayedImageGenerator {
         /** @type ImageData */
         this.imageData = this.ctx.getImageData(0, 0, image.width, image.height);
     }
-    *generateImages(numIntensityDecayLevels) {
+    *generateImages(numIntensityDecayLevels, settleColor=[0,0,0]) {
         const intensityStep = 1/numIntensityDecayLevels;
         for (let i = 0; i < numIntensityDecayLevels; i++) {
             const intensityRate = intensityStep * i;
             const generated = this.ctx.createImageData(this.imageData);
             for (let j = 0; j < this.imageData.data.length; j += 4) {
-                generated.data[j] = this.imageData.data[j] * (1- intensityRate); // r
-                generated.data[j+1] = this.imageData.data[j+1] * (1- intensityRate); // g
-                generated.data[j+2] = this.imageData.data[j+2] * (1- intensityRate); // b
+                let [r, g, b] = [this.imageData.data[j], this.imageData.data[j+1], this.imageData.data[j+2]];
+                r += (settleColor[0] - r) * intensityRate;
+                g += (settleColor[1] - g) * intensityRate;
+                b += (settleColor[2] - b) * intensityRate;
+                [generated.data[j], generated.data[j+1], generated.data[j+2]] = [r, g, b];
                 generated.data[j+3] = this.imageData.data[j+3]; // a
             }
             const canvas = document.createElement('canvas');

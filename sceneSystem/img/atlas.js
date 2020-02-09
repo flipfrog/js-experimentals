@@ -57,6 +57,7 @@ export default [
                 rotate: 90,
                 anchor: {x: 10, y: 10},
                 intensityDecay: 10,
+                settleColor: [0, 0, 0],
             }
         ]
     }

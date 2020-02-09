@@ -153,7 +153,7 @@ export default class {
                 if (texture.intensityDecay) {
                     texture.canvasArray = [];
                     const generator = new DecayedImageGenerator(texture.image);
-                    for (let imageData of generator.generateImages(texture.intensityDecay)) {
+                    for (let imageData of generator.generateImages(texture.intensityDecay, texture.settleColor)) {
                         texture.canvasArray.push(imageData.canvas);
                     }
                 }
