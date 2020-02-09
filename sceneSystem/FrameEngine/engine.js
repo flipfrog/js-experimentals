@@ -223,8 +223,7 @@ export default class {
             const spriteTags = Object.keys(currentScene.sprites[layerNo]);
             spriteTags.forEach(spriteTag => currentScene.sprites[layerNo][spriteTag].draw());
         });
-        // draw particles TODO: delegate it to scene class
-        //currentScene.particles.forEach(particle => particle.update(this, delta));
+        // draw particles
         currentScene.updateParticles(delta);
         currentScene.updateUIObjects();
         // draw fps
