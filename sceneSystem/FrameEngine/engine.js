@@ -104,7 +104,6 @@ export default class {
             // remove event listeners
             if (this.currentSceneIndex !== null) {
                 if (transitionObj) {
-                    // TODO implement transition
                     console.log('requested to change scene: #'+this.currentSceneIndex+' to #'+index);
                     this.transition = transitionObj;
                     this.requestedSceneIndex = index;
