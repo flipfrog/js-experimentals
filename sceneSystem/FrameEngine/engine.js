@@ -6,6 +6,29 @@ import {DecayedImageGenerator} from "./image.js";
 import {UIBase} from './ui.js';
 
 export default class {
+    // comment out when using Safari(temporarily)
+    KEY_SYMBOL_LEFT = 'ArrowLeft';
+    KEY_SYMBOL_RIGHT = 'ArrowRight';
+    KEY_SYMBOL_UP = 'ArrowUp';
+    KEY_SYMBOL_DOWN = 'ArrowDown';
+    KEY_SYMBOL_SPACE = 'Space';
+    displayFps = false;
+    clientData = {};
+    scenes = [];
+    currentSceneIndex = null;
+    requestedSceneIndex = null;
+    transition = null;
+    offScreenCanvas = null;
+    offScreenCtx = null;
+    canvas = null;
+    ctx = null;
+    EVENT_TYPE_KEYDOWN = 'keydown';
+    EVENT_TYPE_KEYUP = 'keyup';
+    EVENT_TYPE_CLICK = 'click';
+    textureMap = {};
+    lastMilliSec = null;
+    //
+
     constructor() {
         // literals
         this.VERSION = '1.0.0';
