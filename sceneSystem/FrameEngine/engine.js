@@ -25,6 +25,10 @@ export default class {
         // Scenes
         this.scenes = [];
         this.currentSceneIndex = null;
+        this.requestedSceneIndex = null;
+
+        // Transition
+        this.transition = null;
 
         // canvas as backing store data
         this.offScreenCanvas = null;
@@ -94,17 +98,22 @@ export default class {
     }
 
     // change scene
-    changeScene(index, useTransition=true) {
+    changeScene(index, transitionObj=null) {
         if (index !== this.currentSceneIndex) {
             console.log('changing scene to #'+index);
             // remove event listeners
             if (this.currentSceneIndex !== null) {
-                if (useTransition) {
+                if (transitionObj) {
                     // TODO implement transition
-                    console.log('changing scene: #'+this.currentSceneIndex+' to #'+index);
+                    console.log('requested to change scene: #'+this.currentSceneIndex+' to #'+index);
+                    this.transition = transitionObj;
+                    this.requestedSceneIndex = index;
+                } else {
+                    this.currentSceneIndex = index;
                 }
+            } else {
+                this.currentSceneIndex = index;
             }
-            this.currentSceneIndex = index;
         }
     }
 
@@ -216,16 +225,26 @@ export default class {
         this.lastMilliSec = currentMilliSec;
         const currentScene = this.scenes[this.currentSceneIndex];
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        currentScene.updateHandler(this, currentScene, delta);
-        // draw sprites
-        const spriteLayerNos = Object.keys(currentScene.sprites);
-        spriteLayerNos.forEach(layerNo => {
-            const spriteTags = Object.keys(currentScene.sprites[layerNo]);
-            spriteTags.forEach(spriteTag => currentScene.sprites[layerNo][spriteTag].draw());
-        });
-        // draw particles
-        currentScene.updateParticles(delta);
-        currentScene.updateUIObjects();
+        if (this.requestedSceneIndex === null) {
+            // draw scene
+            currentScene.updateHandler(this, currentScene, delta);
+            // draw sprites
+            const spriteLayerNos = Object.keys(currentScene.sprites);
+            spriteLayerNos.forEach(layerNo => {
+                const spriteTags = Object.keys(currentScene.sprites[layerNo]);
+                spriteTags.forEach(spriteTag => currentScene.sprites[layerNo][spriteTag].draw());
+            });
+            // draw particles
+            currentScene.updateParticles(delta);
+            currentScene.updateUIObjects();
+        } else {
+            // draw transition
+            if (this.transition.draw(this, delta)) {
+                this.currentSceneIndex = this.requestedSceneIndex;
+                this.requestedSceneIndex = null;
+                this.transition = null;
+            }
+        }
         // draw fps
         if (this.displayFps) {
             const fps = (1/delta).toFixed(1);

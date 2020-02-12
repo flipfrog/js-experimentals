@@ -1,5 +1,6 @@
 import FrameEngine, {Scene, Sprite} from "./FrameEngine/engine.js";
 import {ExplosionParticleSystem} from './FrameEngine/particle.js';
+import {TransitionSwipe} from './FrameEngine/transition.js';
 import {UIButton} from './FrameEngine/ui.js';
 import atlas from './img/atlas.js';
 
@@ -35,7 +36,8 @@ import atlas from './img/atlas.js';
 
             // add button
             const button = new UIButton(engine, 150, 100, 'Change Scene');
-            button.setEventListener((engine, scene, e) => engine.changeScene((scene.index+1) % 2));
+            // when user clicks button a listener requests to change scene with transition
+            button.setEventListener((engine, scene, e) => engine.changeScene((scene.index+1) % 2, new TransitionSwipe()));
             scene.addUIObject(button);
 
             // add scene to engine and change scene to just crated
