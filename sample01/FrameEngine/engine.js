@@ -23,6 +23,7 @@ export default class {
     offScreenCtx = null;
     /** @type HTMLCanvasElement */
     canvas = null;
+    /** @type CanvasRenderingContext2D */
     ctx = null;
     EVENT_TYPE_KEYDOWN = 'keydown';
     EVENT_TYPE_KEYUP = 'keyup';
@@ -178,7 +179,6 @@ export default class {
     }
 
     // create texture atlas data structure from control file(js file)
-    // TODO: add textures' border-area
     async loadTextureAtlas(atlas) {
         const imageFiles = atlas.map(file => file.imageFile);
         // load image for textures
@@ -408,6 +408,4 @@ export class Scene {
     addUIObject(uiObject) {
         this.uiObjects.push(uiObject);
     }
-
-    // TODO: implement removing particle
 }
