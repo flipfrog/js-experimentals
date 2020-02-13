@@ -41,6 +41,7 @@ export class UIButton extends UIBase {
         this.imageName = null;
         /** @type TextMetrics */
         this.textSize = null;
+        this.font = null;
         this.rectFillStyle = 'white';
         this.textFillStyle = 'black';
         this.type = this.TYPE_UI_BUTTON;
@@ -54,7 +55,10 @@ export class UIButton extends UIBase {
                 this.geometry.width = texture.width;
                 this.geometry.height = texture.height;
             } else {
+                this.ctx.save();
+                this.ctx.font = this.font;
                 this.textSize = this.ctx.measureText(this.text);
+                this.ctx.restore();
                 this.geometry.width = this.textSize.width;
                 this.geometry.height = this.textSize.actualBoundingBoxAscent + this.textSize.actualBoundingBoxDescent;
             }
@@ -73,6 +77,9 @@ export class UIButton extends UIBase {
                 this.engine.drawTexture(this.engine.getCtx(), this.imageName, this.geometry.cx, this.geometry.cy);
                 this.ctx.strokeRect(this.geometry.x, this.geometry.y, this.geometry.width, this.geometry.height);
             } else {
+                if (this.font) {
+                    this.ctx.font = this.font;
+                }
                 this.ctx.fillStyle = this.rectFillStyle;
                 this.ctx.fillRect(this.geometry.x, this.geometry.y, this.geometry.width, this.geometry.height);
                 this.ctx.fillStyle = this.textFillStyle;
@@ -90,6 +97,9 @@ export class UIButton extends UIBase {
         this.imageName = imageName;
         // set flag to compute geometry because image geometry is settled after loading texture atlas images
         this.shouldComputeGeometry = true;
+    }
+    setFont(font) {
+        this.font = font;
     }
 }
 
