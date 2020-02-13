@@ -171,7 +171,10 @@ export default class {
                 scene.eventListener(this, scene, e);
             }
         }
-        e.preventDefault()
+        if (e.type !== this.EVENT_TYPE_MOUSEDOWN) {
+            // when mousedown event occurred it needs a system's default process to get focus
+            e.preventDefault()
+        }
     }
 
     // create texture atlas data structure from control file(js file)
