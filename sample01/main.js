@@ -83,8 +83,8 @@ import atlas from './img/atlas.js';
             case engine.EVENT_TYPE_KEYUP:
                 procKeyEvents(engine, scene, e, e.type);
                 break;
-            case engine.EVENT_TYPE_CLICK:
-                procMouseClick(engine, scene, e);
+            case engine.EVENT_TYPE_MOUSEDOWN:
+                procMouseDown(engine, scene, e);
                 break;
         }
     }
@@ -105,8 +105,8 @@ import atlas from './img/atlas.js';
         scene.setClientData(data);
     }
 
-    // process mouse click
-    function procMouseClick(engine, scene, e) {
+    // process mouse down
+    function procMouseDown(engine, scene, e) {
         const rect = e.target.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;

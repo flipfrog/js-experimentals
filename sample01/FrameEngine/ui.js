@@ -14,7 +14,7 @@ export class UIBase {
         this.draw = () => {};
     }
     eventListener(engine, scene, e) {
-        if (e.type === engine.EVENT_TYPE_CLICK) {
+        if (e.type === engine.EVENT_TYPE_MOUSEDOWN) {
             const rect = e.target.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;

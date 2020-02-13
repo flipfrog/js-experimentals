@@ -27,6 +27,7 @@ export default class {
     EVENT_TYPE_KEYDOWN = 'keydown';
     EVENT_TYPE_KEYUP = 'keyup';
     EVENT_TYPE_CLICK = 'click';
+    EVENT_TYPE_MOUSEDOWN = 'mousedown';
     textureMap = {};
     lastMilliSec = null;
     //
@@ -67,6 +68,7 @@ export default class {
         this.EVENT_TYPE_KEYDOWN = 'keydown';
         this.EVENT_TYPE_KEYUP = 'keyup';
         this.EVENT_TYPE_CLICK = 'click';
+        this.EVENT_TYPE_MOUSEDOWN = 'mousedown';
 
         this.textureMap = {};
         this.lastMilliSec = null;
@@ -152,9 +154,10 @@ export default class {
 
     // start updating canvas frame
     startFrame () {
-        this.canvas.addEventListener(this.EVENT_TYPE_KEYDOWN, this.eventListenerIn.bind(this), false);
-        this.canvas.addEventListener(this.EVENT_TYPE_KEYUP, this.eventListenerIn.bind(this), false);
-        this.canvas.addEventListener(this.EVENT_TYPE_CLICK, this.eventListenerIn.bind(this), false);
+        const listener = this.eventListenerIn.bind(this);
+        this.canvas.addEventListener(this.EVENT_TYPE_KEYDOWN, listener, false);
+        this.canvas.addEventListener(this.EVENT_TYPE_KEYUP, listener, false);
+        this.canvas.addEventListener(this.EVENT_TYPE_MOUSEDOWN, listener, false);
         requestAnimationFrame(this.drawFrame.bind(this));
     }
 
