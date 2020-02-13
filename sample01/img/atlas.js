@@ -60,5 +60,19 @@ export default [
                 settleColor: [0, 0, 0],
             }
         ]
+    },
+    {
+        imageFile: 'img/start_button.png',
+        textures: [
+            {
+                name: 'start_button_1.png',
+                x: 0,
+                y: 0,
+                width: 50,
+                height: 51,
+                rotate: 0,
+                anchor: {x: 25, y: 25}
+            }
+        ]
     }
 ];
