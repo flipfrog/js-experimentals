@@ -17,13 +17,14 @@ export class TransitionSwipe extends TransitionBase {
             }
             const ctx = engine.getCtx();
             ctx.save();
+            const xOffset = this.t * this.wipeSpeed;
             const currentScene = engine.scenes[engine.currentSceneIndex];
-            ctx.translate(this.t * this.wipeSpeed, 0);
-            currentScene.updateHandler(this, currentScene, delta);
+            ctx.translate(xOffset, 0);
+            currentScene.updateHandler(engine, currentScene, delta);
             currentScene.draw(this, delta);
             const nextScene = engine.scenes[engine.requestedSceneIndex];
-            ctx.translate(-(engine.getCanvas().width - this.t * this.wipeSpeed), 0);
-            nextScene.updateHandler(this, nextScene, delta);
+            ctx.translate(-(engine.getCanvas().width - xOffset) - xOffset, 0);
+            nextScene.updateHandler(engine, nextScene, delta);
             nextScene.draw(this, delta);
             ctx.restore();
             return false;
