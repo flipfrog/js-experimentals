@@ -255,17 +255,9 @@ export default class {
         const currentScene = this.scenes[this.currentSceneIndex];
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.requestedSceneIndex === null) {
-            // draw scene
+            // update and draw scene
             currentScene.updateHandler(this, currentScene, delta);
-            // draw sprites
-            const spriteLayerNos = Object.keys(currentScene.sprites);
-            spriteLayerNos.forEach(layerNo => {
-                const spriteTags = Object.keys(currentScene.sprites[layerNo]);
-                spriteTags.forEach(spriteTag => currentScene.sprites[layerNo][spriteTag].draw());
-            });
-            // draw particles
-            currentScene.updateParticles(delta);
-            currentScene.updateUIObjects();
+            currentScene.draw(this, delta);
         } else {
             // draw transition
             if (this.transition.draw(this, delta)) {
@@ -408,5 +400,18 @@ export class Scene {
     // add UI object
     addUIObject(uiObject) {
         this.uiObjects.push(uiObject);
+    }
+
+    // draw scene
+    draw(engine, delta) {
+        // draw sprites
+        const spriteLayerNos = Object.keys(this.sprites);
+        spriteLayerNos.forEach(layerNo => {
+            const spriteTags = Object.keys(this.sprites[layerNo]);
+            spriteTags.forEach(spriteTag => this.sprites[layerNo][spriteTag].draw());
+        });
+        // draw particles
+        this.updateParticles(delta);
+        this.updateUIObjects();
     }
 }

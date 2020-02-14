@@ -35,7 +35,7 @@ import atlas from './img/atlas.js';
         engine.addScene(boardScene);
 
         // add scene control listener
-        startButton.setEventListener((engine, scene, e) => engine.changeScene(boardScene.index));
+        startButton.setEventListener((engine, scene, e) => engine.changeScene(boardScene.index, new TransitionSwipe()));
 
         // change to the title scene
         engine.changeScene(titleScene.index);
