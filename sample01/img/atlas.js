@@ -74,5 +74,19 @@ export default [
                 anchor: {x: 25, y: 25}
             }
         ]
+    },
+    {
+        imageFile: 'img/title.png',
+        textures: [
+            {
+                name: 'title.png',
+                x: 0,
+                y: 0,
+                width: 400,
+                height: 200,
+                rotate: 0,
+                anchor: {x: 200, y: 100}
+            }
+        ]
     }
 ];

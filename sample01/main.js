@@ -11,6 +11,7 @@ import atlas from './img/atlas.js';
         const engine = new FrameEngine();
         engine.setCanvas('canvas_'+index, (index === 1));
         engine.setDisplayFps(true);
+        const [centerX, centerY] = [engine.getCanvas().width/2, engine.getCanvas().height/2];
 
         // create title scene
         const titleScene = new Scene(engine);
@@ -20,6 +21,7 @@ import atlas from './img/atlas.js';
         startButton.setFont('48px serif');
         titleScene.addUIObject(startButton);
         engine.addScene(titleScene);
+        titleScene.addSprite(new Sprite(engine, 'title.png', 0, null).setPosition(centerX, centerY));
 
         // create board scene
         const boardScene = new Scene(engine);

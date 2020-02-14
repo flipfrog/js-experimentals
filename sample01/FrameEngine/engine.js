@@ -314,6 +314,7 @@ export class Sprite {
     // set sprite's position (and rotation)
     setPosition(x, y, rotate = 0) {
         [this.x, this.y, this.rotate] = [x, y, rotate];
+        return this;
     }
     // draw sprite
     draw() {
