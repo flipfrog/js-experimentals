@@ -25,7 +25,7 @@ import atlas from './img/atlas.js';
 
         // create board scene
         const boardScene = new Scene(engine);
-        boardScene.updateHandler = (engine, scene, delta) => {};
+        boardScene.updateHandler = update;
         boardScene.eventListener = eventListener;
         boardScene.setClientData({
             pps: 20,
@@ -33,6 +33,7 @@ import atlas from './img/atlas.js';
             spaceKeyDownStatus: false
         });
         engine.addScene(boardScene);
+        boardScene.addSprite(new Sprite(engine, 'pengo_2.png', 0, 'sprite_0').setPosition(100, 100));
 
         // add scene control listener
         startButton.setEventListener((engine, scene, e) => engine.changeScene(boardScene.index, new TransitionSwipe()));
@@ -49,32 +50,27 @@ import atlas from './img/atlas.js';
     function update(engine, scene, delta) {
         const canvas = engine.getCanvas();
         const data = scene.getClientData();
-        for (let col = 100; col <= 200; col += 50) {
-            for (let row = 100; row <= 200; row += 50) {
-                const sprite = scene.getSprite(`sprite_${row}_${col}`);
-                if (sprite) {
-                    let x = sprite.x;
-                    let y = sprite.y;
-                    const pps = data.pps;
-
-                    // move sprite according to keydown status of arrow keys.
-                    const pxDelta = delta * pps;
-                    if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT]) {
-                        x = (x - pxDelta) % canvas.width;
-                    }
-                    if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT]) {
-                        x = (x + pxDelta) % canvas.width;
-                    }
-                    if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_UP]) {
-                        y = (y - pxDelta) % canvas.height;
-                    }
-                    if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN]) {
-                        y = (y + pxDelta) % canvas.height;
-                    }
-                    const rotate = sprite.rotate + delta * 45;
-                    sprite.setPosition(x, y, rotate);
-                }
+        const sprite = scene.getSprite('sprite_0');
+        if (sprite) {
+            let x = sprite.x;
+            let y = sprite.y;
+            const pps = data.pps;
+            // move sprite according to keydown status of arrow keys.
+            const pxDelta = delta * pps;
+            if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT]) {
+                x = (x - pxDelta) % canvas.width;
             }
+            if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT]) {
+                x = (x + pxDelta) % canvas.width;
+            }
+            if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_UP]) {
+                y = (y - pxDelta) % canvas.height;
+            }
+            if (data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN]) {
+                y = (y + pxDelta) % canvas.height;
+            }
+            const rotate = sprite.rotate + delta * 45;
+            sprite.setPosition(x, y, rotate);
         }
     }
 
