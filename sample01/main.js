@@ -16,9 +16,9 @@ import atlas from './img/atlas.js';
         // create title scene
         const titleScene = new Scene(engine);
         titleScene.updateHandler = (engine, scene, delta) => {};
-        const startButton = new UIButton(engine, 100, 100, 'Button');
-        startButton.setImage('start_button_1.png');
-        startButton.setFont('48px serif');
+        const startButton = new UIButton(engine, 100, 100, 'Start');
+        //startButton.setImage('start_button_1.png');
+        startButton.setFont('48px serif').setHeight(48);
         titleScene.addUIObject(startButton);
         engine.addScene(titleScene);
         titleScene.addSprite(new Sprite(engine, 'title.png', 0, null).setPosition(centerX, centerY));

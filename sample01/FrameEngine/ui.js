@@ -42,6 +42,7 @@ export class UIButton extends UIBase {
         /** @type TextMetrics */
         this.textSize = null;
         this.font = null;
+        this.height = 20; // 20 px default
         this.rectFillStyle = 'white';
         this.textFillStyle = 'black';
         this.type = this.TYPE_UI_BUTTON;
@@ -62,7 +63,7 @@ export class UIButton extends UIBase {
             this.textSize = this.ctx.measureText(this.text);
             this.ctx.restore();
             this.geometry.width = this.textSize.width;
-            this.geometry.height = this.textSize.actualBoundingBoxAscent + this.textSize.actualBoundingBoxDescent;
+            this.geometry.height = this.height;
         }
         this.geometry.x = this.geometry.cx - this.geometry.width/2;
         this.geometry.y = this.geometry.cy - this.geometry.height/2;
@@ -84,22 +85,30 @@ export class UIButton extends UIBase {
             this.ctx.fillStyle = this.rectFillStyle;
             this.ctx.fillRect(this.geometry.x, this.geometry.y, this.geometry.width, this.geometry.height);
             this.ctx.fillStyle = this.textFillStyle;
-            this.ctx.fillText(this.text, this.geometry.x, this.geometry.y + this.textSize.actualBoundingBoxAscent);
+            this.ctx.fillText(this.text, this.geometry.x, this.geometry.y+this.geometry.height);
             this.ctx.restore();
         }
     }
     setText(text) {
         this.text = text;
-        this.computeGeometry();
+        this.shouldComputeGeometry = true;
         return this;
     }
     setImage(imageName) {
         this.imageName = imageName;
         // set flag to compute geometry because image geometry is settled after loading texture atlas images
         this.shouldComputeGeometry = true;
+        return this;
     }
     setFont(font) {
         this.font = font;
+        this.shouldComputeGeometry = true;
+        return this;
+    }
+    setHeight(height) {
+        this.height = height;
+        this.shouldComputeGeometry = true;
+        return this;
     }
 }
 
