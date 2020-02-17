@@ -84,6 +84,8 @@ export default class {
             this.offScreenCanvas.height = this.canvas.height;
             this.offScreenCtx = this.offScreenCanvas.getContext('2d');
         }
+        // disable context menu
+        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     }
 
     // setter and getters
@@ -315,9 +317,9 @@ export class Sprite {
 }
 
 export class Scene {
-    constructor(engine) {
+    constructor(engine, tag=null) {
         this.engine = engine;
-        this.tag = null;
+        this.tag = tag;
         this.index = null;
         /** @type UIBase[] */
         this.uiObjects = [];
@@ -413,5 +415,10 @@ export class Scene {
         // draw particles
         this.updateParticles(delta);
         this.updateUIObjects();
+    }
+
+    // set tag
+    setTag(tag) {
+        this.tag = tag;
     }
 }

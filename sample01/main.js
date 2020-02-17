@@ -20,13 +20,14 @@ import atlas from './img/atlas.js';
         //startButton.setImage('start_button_1.png');
         startButton.setFont('48px serif').setHeight(48);
         titleScene.addUIObject(startButton);
+        startButton.setEventListener((engine, scene, e) => engine.changeScene(boardScene.index, new TransitionSwipe()));
         engine.addScene(titleScene);
         titleScene.addSprite(new Sprite(engine, 'title.png', 0, null).setPosition(centerX, centerY));
 
         // create board scene
         const boardScene = new Scene(engine);
-        boardScene.updateHandler = update;
-        boardScene.eventListener = eventListener;
+        boardScene.updateHandler = updateBoardScene;
+        boardScene.eventListener = sharedEventListener;
         boardScene.setClientData({
             pps: 20,
             arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
@@ -35,8 +36,14 @@ import atlas from './img/atlas.js';
         engine.addScene(boardScene);
         boardScene.addSprite(new Sprite(engine, 'pengo_2.png', 0, 'sprite_0').setPosition(100, 100));
 
-        // add scene control listener
-        startButton.setEventListener((engine, scene, e) => engine.changeScene(boardScene.index, new TransitionSwipe()));
+        // create score scene
+        const scoreScene = new Scene(engine, 'score_scene');
+        scoreScene.updateHandler = (engine, scene, delta) => {};
+        const gotoTitleButton = new UIButton(engine, 100, 100, 'Goto Title');
+        gotoTitleButton.setFont('48px serif').setHeight(48);
+        scoreScene.addUIObject(gotoTitleButton);
+        engine.addScene(scoreScene);
+        gotoTitleButton.setEventListener((engine, scene, e) => engine.changeScene(titleScene.index, new TransitionSwipe()));
 
         // change to the title scene
         engine.changeScene(titleScene.index);
@@ -47,7 +54,15 @@ import atlas from './img/atlas.js';
     });
 
     // update canvas
-    function update(engine, scene, delta) {
+    let elapsedTime = 0;
+    const STAY_SEC = 2;
+    function updateBoardScene(engine, scene, delta) {
+        elapsedTime += delta;
+        if (elapsedTime > STAY_SEC) {
+            engine.changeSceneByTag('score_scene', new TransitionSwipe());
+            elapsedTime = 0;
+            return;
+        }
         const canvas = engine.getCanvas();
         const data = scene.getClientData();
         const sprite = scene.getSprite('sprite_0');
@@ -75,7 +90,7 @@ import atlas from './img/atlas.js';
     }
 
     // event listener
-    function eventListener(engine, scene, e) {
+    function sharedEventListener(engine, scene, e) {
         switch (e.type) {
             case engine.EVENT_TYPE_KEYDOWN:
             case engine.EVENT_TYPE_KEYUP:
