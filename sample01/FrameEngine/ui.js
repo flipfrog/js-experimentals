@@ -41,8 +41,8 @@ export class UIButton extends UIBase {
         this.imageName = null;
         /** @type TextMetrics */
         this.textSize = null;
-        this.font = null;
-        this.height = 20; // 20 px default
+        this.fontName = 'serif';
+        this.fontSize = 16;
         this.rectFillStyle = 'white';
         this.textFillStyle = 'black';
         this.type = this.TYPE_UI_BUTTON;
@@ -59,11 +59,11 @@ export class UIButton extends UIBase {
             this.geometry.height = texture.height;
         } else {
             this.ctx.save();
-            this.ctx.font = this.font;
+            this.ctx.font = this.fontSize+'px '+this.fontName;
             this.textSize = this.ctx.measureText(this.text);
             this.ctx.restore();
             this.geometry.width = this.textSize.width;
-            this.geometry.height = this.height;
+            this.geometry.height = this.fontSize;
         }
         this.geometry.x = this.geometry.cx - this.geometry.width/2;
         this.geometry.y = this.geometry.cy - this.geometry.height/2;
@@ -79,8 +79,8 @@ export class UIButton extends UIBase {
             this.engine.drawTexture(this.engine.getCtx(), this.imageName, this.geometry.cx, this.geometry.cy);
             this.ctx.strokeRect(this.geometry.x, this.geometry.y, this.geometry.width, this.geometry.height);
         } else {
-            if (this.font) {
-                this.ctx.font = this.font;
+            if (this.fontName) {
+                this.ctx.font = this.fontSize+'px '+this.fontName;
             }
             this.ctx.fillStyle = this.rectFillStyle;
             this.ctx.fillRect(this.geometry.x, this.geometry.y, this.geometry.width, this.geometry.height);
@@ -100,13 +100,9 @@ export class UIButton extends UIBase {
         this.shouldComputeGeometry = true;
         return this;
     }
-    setFont(font) {
-        this.font = font;
-        this.shouldComputeGeometry = true;
-        return this;
-    }
-    setHeight(height) {
-        this.height = height;
+    setFont(fontName, fontSize=10) {
+        this.fontName = fontName;
+        this.fontSize = fontSize;
         this.shouldComputeGeometry = true;
         return this;
     }
