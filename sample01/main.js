@@ -55,7 +55,7 @@ import atlas from './img/atlas.js';
 
     // update canvas
     let elapsedTime = 0;
-    const STAY_SEC = 2;
+    const STAY_SEC = 600;
     function updateBoardScene(engine, scene, delta) {
         elapsedTime += delta;
         if (elapsedTime > STAY_SEC) {
@@ -99,6 +99,12 @@ import atlas from './img/atlas.js';
             case engine.EVENT_TYPE_MOUSEDOWN:
                 procMouseDown(engine, scene, e);
                 break;
+            case engine.EVENT_TYPE_TOUCHSTART:
+            case engine.EVENT_TYPE_TOUCHEND:
+            case engine.EVENT_TYPE_TOUCHCANCEL:
+            case engine.EVENT_TYPE_TOUCHMOVE:
+                procTouchEvents(engine, scene, e);
+                break;
         }
     }
 
@@ -133,5 +139,51 @@ import atlas from './img/atlas.js';
         }
         scene.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
          */
+    }
+
+    const touchThresholdX = 10;
+    const touchStatus = {
+        isTouched: false,
+        startX: null,
+        startY: null
+    };
+    function procTouchEvents(engine, scene, e) {
+        const coordinate = engine.getEventCoordinates(e);
+        const x = coordinate.x;
+        const y = coordinate.y;
+        const data = scene.getClientData();
+        switch (e.type) {
+            case engine.EVENT_TYPE_TOUCHSTART:
+                touchStatus.isTouched = true;
+                touchStatus.startX = x;
+                touchStatus.startY = y;
+                break;
+            case engine.EVENT_TYPE_TOUCHMOVE:
+                const diffX = touchStatus.startX - x;
+                if (Math.abs(diffX) < touchThresholdX) {
+                    data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT] = false;
+                    data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT] = false;
+                    return;
+                }
+                if (!touchStatus.isTouched) {
+                    return;
+                }
+                if (diffX < 0) {
+                    // moved right
+                    data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT] = true;
+                } else {
+                    // moved left
+                    data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT] = true;
+                }
+                break;
+            case engine.EVENT_TYPE_TOUCHEND:
+            case engine.EVENT_TYPE_TOUCHCANCEL:
+                touchStatus.isTouched = false;
+                touchStatus.startX = null;
+                touchStatus.startY = null;
+                data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT] = false;
+                data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT] = false;
+                break;
+        }
     }
 })();

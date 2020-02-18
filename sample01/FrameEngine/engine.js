@@ -43,6 +43,10 @@ class FrameEngine {
         this.EVENT_TYPE_KEYUP = 'keyup';
         this.EVENT_TYPE_CLICK = 'click';
         this.EVENT_TYPE_MOUSEDOWN = 'mousedown';
+        this.EVENT_TYPE_TOUCHSTART = 'touchstart';
+        this.EVENT_TYPE_TOUCHEND = 'touchend';
+        this.EVENT_TYPE_TOUCHCANCEL = 'touchcancel';
+        this.EVENT_TYPE_TOUCHMOVE = 'touchmove';
 
         this.textureMap = {};
         this.lastMilliSec = null;
@@ -131,9 +135,14 @@ class FrameEngine {
     // start updating canvas frame
     startFrame () {
         const listener = this.eventListenerIn.bind(this);
+        this.canvas.addEventListener(this.EVENT_TYPE_CLICK, listener, false);
         this.canvas.addEventListener(this.EVENT_TYPE_KEYDOWN, listener, false);
         this.canvas.addEventListener(this.EVENT_TYPE_KEYUP, listener, false);
         this.canvas.addEventListener(this.EVENT_TYPE_MOUSEDOWN, listener, false);
+        this.canvas.addEventListener(this.EVENT_TYPE_TOUCHSTART, listener, false);
+        this.canvas.addEventListener(this.EVENT_TYPE_TOUCHMOVE, listener, false);
+        this.canvas.addEventListener(this.EVENT_TYPE_TOUCHEND, listener, false);
+        this.canvas.addEventListener(this.EVENT_TYPE_TOUCHCANCEL, listener, false);
         requestAnimationFrame(this.drawFrame.bind(this));
     }
 
@@ -258,6 +267,23 @@ class FrameEngine {
                 0, 0, this.canvas.width, this.canvas.height);
         }
         requestAnimationFrame(this.drawFrame.bind(this));
+    }
+
+    // get event coordinates
+    getEventCoordinates(e) {
+        switch(e.type) {
+            case this.EVENT_TYPE_TOUCHSTART:
+            case this.EVENT_TYPE_TOUCHMOVE:
+                const rectTouch = e.target.getBoundingClientRect();
+                const touch = e.touches[0];
+                return {x: touch.clientX - rectTouch.left, y: touch.clientY - rectTouch.top};
+            case this.EVENT_TYPE_MOUSEDOWN:
+            case this.EVENT_TYPE_CLICK:
+                const rectMouse = e.target.getBoundingClientRect();
+                return {x: e.clientX - rectMouse.left, y: e.clientY - rectMouse.top};
+            default:
+                return {x: 0, y: 0};
+        }
     }
 }
 

@@ -14,11 +14,9 @@ export class UIBase {
     computeGeometry () {}
     draw () {}
     eventListener(engine, scene, e) {
-        if (e.type === engine.EVENT_TYPE_MOUSEDOWN) {
-            const rect = e.target.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            if (this.geometry.isContained(x, y)) {
+        if (e.type === engine.EVENT_TYPE_MOUSEDOWN || e.type === engine.EVENT_TYPE_TOUCHSTART) {
+            const coordinate = engine.getEventCoordinates(e);
+            if (this.geometry.isContained(coordinate.x, coordinate.y)) {
                 this.userEventListener(engine, scene, e);
                 return true;
             }
