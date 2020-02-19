@@ -5,7 +5,7 @@
 import {DecayedImageGenerator} from "./image.js";
 import {UIBase} from './ui.js';
 
-class FrameEngine {
+export default class FrameEngine {
     constructor() {
         // literals
         this.VERSION = '1.0.0';
@@ -286,8 +286,6 @@ class FrameEngine {
         }
     }
 }
-
-export default FrameEngine;
 
 export class Sprite {
     /**
