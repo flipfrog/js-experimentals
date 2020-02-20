@@ -15,7 +15,7 @@ import atlas from './img/atlas.js';
 
         // create title scene
         const titleScene = new Scene(engine);
-        titleScene.updateHandler = (engine, scene, delta) => {};
+        //titleScene.updateHandler = (engine, scene, delta) => {};
         const startButton = new UIButton(engine, 100, 100, 'Start');
         //startButton.setImage('start_button_1.png');
         startButton.setFont('serif', 48);
@@ -38,7 +38,7 @@ import atlas from './img/atlas.js';
 
         // create score scene
         const scoreScene = new Scene(engine, 'score_scene');
-        scoreScene.updateHandler = (engine, scene, delta) => {};
+        //scoreScene.updateHandler = (engine, scene, delta) => {};
         const gotoTitleButton = new UIButton(engine, 100, 100, 'Goto Title');
         gotoTitleButton.setFont('serif', 48);
         scoreScene.addUIObject(gotoTitleButton);
@@ -141,16 +141,16 @@ import atlas from './img/atlas.js';
          */
     }
 
-    const touchThresholdX = 10;
+    // process touch events to convert touch moves to arrow key-down statuses.
+    const touchSenseThresholdX = 30;
+    const touchSenseThresholdY = 30;
     const touchStatus = {
         isTouched: false,
         startX: null,
         startY: null
     };
     function procTouchEvents(engine, scene, e) {
-        const coordinate = engine.getEventCoordinates(e);
-        const x = coordinate.x;
-        const y = coordinate.y;
+        const {x, y} = engine.getEventCoordinates(e);
         const data = scene.getClientData();
         switch (e.type) {
             case engine.EVENT_TYPE_TOUCHSTART:
@@ -159,21 +159,32 @@ import atlas from './img/atlas.js';
                 touchStatus.startY = y;
                 break;
             case engine.EVENT_TYPE_TOUCHMOVE:
+                // convert touch moves to key events
                 const diffX = touchStatus.startX - x;
-                if (Math.abs(diffX) < touchThresholdX) {
+                const diffY = touchStatus.startY - y;
+                if (Math.abs(diffX) < touchSenseThresholdX || !touchStatus.isTouched) {
                     data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT] = false;
                     data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT] = false;
-                    return;
-                }
-                if (!touchStatus.isTouched) {
-                    return;
-                }
-                if (diffX < 0) {
-                    // moved right
-                    data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT] = true;
                 } else {
-                    // moved left
-                    data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT] = true;
+                    if (diffX < 0) {
+                        // moved right
+                        data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT] = true;
+                    } else {
+                        // moved left
+                        data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT] = true;
+                    }
+                }
+                if (Math.abs(diffY) < touchSenseThresholdY || !touchStatus.isTouched) {
+                    data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN] = false;
+                    data.arrowKeyDownStatuses[engine.KEY_SYMBOL_UP] = false;
+                } else {
+                    if (diffY < 0) {
+                        // moved down
+                        data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN] = true;
+                    } else {
+                        // moved up
+                        data.arrowKeyDownStatuses[engine.KEY_SYMBOL_UP] = true;
+                    }
                 }
                 break;
             case engine.EVENT_TYPE_TOUCHEND:
@@ -183,6 +194,8 @@ import atlas from './img/atlas.js';
                 touchStatus.startY = null;
                 data.arrowKeyDownStatuses[engine.KEY_SYMBOL_RIGHT] = false;
                 data.arrowKeyDownStatuses[engine.KEY_SYMBOL_LEFT] = false;
+                data.arrowKeyDownStatuses[engine.KEY_SYMBOL_DOWN] = false;
+                data.arrowKeyDownStatuses[engine.KEY_SYMBOL_UP] = false;
                 break;
         }
     }

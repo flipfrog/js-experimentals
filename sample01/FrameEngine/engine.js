@@ -133,7 +133,7 @@ export default class FrameEngine {
     }
 
     // start updating canvas frame
-    startFrame () {
+    startFrame() {
         const listener = this.eventListenerIn.bind(this);
         this.canvas.addEventListener(this.EVENT_TYPE_CLICK, listener, false);
         this.canvas.addEventListener(this.EVENT_TYPE_KEYDOWN, listener, false);
@@ -331,9 +331,9 @@ export class Scene {
         this.spriteMap = {};
         this.particles = [];
         // event listener
-        this.eventListener = () => {};
+        this.eventListener = function (engine, scene, e) {};
         // frame update handler
-        this.updateHandler = () => {};
+        this.updateHandler = function (engine, scene, delta) {};
     }
 
     // set and get client data
