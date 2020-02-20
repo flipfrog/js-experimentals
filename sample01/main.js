@@ -1,5 +1,5 @@
 import FrameEngine, {Scene, Sprite} from "./FrameEngine/engine.js";
-import {ExplosionParticleSystem} from './FrameEngine/particle.js';
+import {ParticleSystemExplosion} from './FrameEngine/particle.js';
 import {TransitionSwipe} from './FrameEngine/transition.js';
 import {UIButton} from './FrameEngine/ui.js';
 import atlas from './img/atlas.js';
