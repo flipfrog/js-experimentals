@@ -49,6 +49,7 @@ import atlas from './img/atlas.js';
         engine.changeScene(titleScene.index);
 
         // load sprite textures then start frame rendering
+        //engine.loadTextureAtlas('../img/atlas.js')
         engine.loadTextureAtlas(atlas)
             .then(() => engine.startFrame());
     });

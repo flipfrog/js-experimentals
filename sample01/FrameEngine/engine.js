@@ -163,7 +163,11 @@ export default class FrameEngine {
     }
 
     // create texture atlas data structure from control file(js file)
-    async loadTextureAtlas(atlas) {
+    async loadTextureAtlas(_atlas) {
+        let atlas = _atlas;
+        if (typeof _atlas === "string") {
+            atlas = (await import(_atlas)).default;
+        }
         const imageFiles = atlas.map(file => file.imageFile);
         // load image for textures
         const images = await this.loadImages(imageFiles);
