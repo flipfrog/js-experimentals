@@ -1,3 +1,6 @@
+/**
+ * transition base class
+ */
 export class TransitionBase {
     constructor() {
         this.t = 0;
@@ -7,6 +10,9 @@ export class TransitionBase {
     }
 }
 
+/**
+ * swipe transition class
+ */
 export class TransitionSwipe extends TransitionBase {
     constructor(wipeSpeed = 2000) {
         super();

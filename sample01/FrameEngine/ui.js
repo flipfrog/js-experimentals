@@ -1,4 +1,6 @@
-// User Interface component base class
+/**
+ * User Interface component base class
+ */
 export class UIBase {
     constructor(engine, cx, cy) {
         this.TYPE_UI_BUTTON = 'UIButton';
@@ -34,7 +36,9 @@ export class UIBase {
     }
 }
 
-// Simple Button component
+/**
+ * Simple Button component
+ */
 export class UIButton extends UIBase {
     constructor(engine, cx, cy, text='button') {
         super(engine, cx, cy);
@@ -52,7 +56,6 @@ export class UIButton extends UIBase {
         this.computeGeometry();
     }
     computeGeometry () {
-        // TODO: add image and text renderings if needed
         if (this.imageName && !this.text) {
             const texture = this.engine.textureMap[this.imageName];
             this.geometry.width = texture.width;
@@ -74,7 +77,7 @@ export class UIButton extends UIBase {
             this.shouldComputeGeometry = false;
         }
         this.ctx.save();
-        // TODO: add image and text rendering
+        // TODO: add image and text rendering if needed
         if (this.imageName && !this.text) {
             this.engine.drawTexture(this.engine.getCtx(), this.imageName, this.geometry.cx, this.geometry.cy);
             this.ctx.strokeRect(this.geometry.x, this.geometry.y, this.geometry.width, this.geometry.height);
@@ -108,6 +111,9 @@ export class UIButton extends UIBase {
     }
 }
 
+/**
+ * ui geometry class
+ */
 class UIGeometry {
     constructor() {
         this.x = null;

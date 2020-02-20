@@ -1,7 +1,6 @@
-//
-// Particle System
-// Each particle implementations are extended from its base classes.
-//
+/**
+ * particle system base class
+ */
 class ParticleSystemBase {
     // initialize own parameters
     constructor(cx, cy, textureName, options={}) {
@@ -41,16 +40,22 @@ class ParticleSystemBase {
     }
 }
 
-export class ExplosionParticleSystem extends ParticleSystemBase {
+/**
+ * explosion particle system class
+ */
+export class ParticleSystemExplosion extends ParticleSystemBase {
     constructor(cx, cy, textureName, options={}) {
         super(cx, cy, textureName, options);
         for (let i = 0; i < this.options.numInitialTextures; i++) {
-            const texture = new ExplosionParticle(this.cx, this.cy, this.textureName);
+            const texture = new ParticleExplosion(this.cx, this.cy, this.textureName);
             this.textures.push(texture);
         }
     }
 }
 
+/**
+ * particle base class
+ */
 class ParticleBase {
     constructor(cx, cy, textureName) {
         this.t = 0;
@@ -69,12 +74,14 @@ class ParticleBase {
     }
     draw(engine, intensityDecayIndex) {
         const ctx = engine.getCtx();
-        // TODO: to be using raw interface to get rendering speed up
         engine.putDecayTexture(ctx, this.textureName, this.x, this.y, intensityDecayIndex, this.rotate);
     }
 }
 
-class ExplosionParticle extends ParticleBase {
+/**
+ * explosion particle class
+ */
+class ParticleExplosion extends ParticleBase {
     constructor(cx, cy, textureName) {
         super(cx, cy, textureName);
         // compose texture velocities of fix and elastic part
@@ -88,8 +95,8 @@ class ExplosionParticle extends ParticleBase {
     }
     updateCoordinate(delta) {
         super.updateCoordinate(delta);
-        const velocityMultiplyValue = 1/(1 - Math.pow(Math.E, this.t)); // TODO: may need adjust a decay rate
-        this.vx = this.initialVx * velocityMultiplyValue; // TODO: to be more efficiency
+        const velocityMultiplyValue = 1/(1 - Math.pow(Math.E, this.t));
+        this.vx = this.initialVx * velocityMultiplyValue;
         this.vy = this.initialVy * velocityMultiplyValue;
         this.x += (this.vx * delta);
         this.y += (this.vy * delta);
