@@ -1,7 +1,3 @@
-//
-// Frame Update Engine
-// It needs importing particle.js.
-//
 import {DecayedImageGenerator} from "./image.js";
 import {UIBase} from './ui.js';
 
