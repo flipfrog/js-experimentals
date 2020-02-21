@@ -381,6 +381,14 @@ export default class FrameEngine {
                 return {x: 0, y: 0};
         }
     }
+
+    /**
+     * check retina display
+     * @returns {boolean}
+     */
+    isRetinaDisplay() {
+        return window.devicePixelRatio > 1;
+    }
 }
 
 /**

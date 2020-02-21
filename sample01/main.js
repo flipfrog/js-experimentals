@@ -34,7 +34,8 @@ import atlas from './img/atlas.js';
             spaceKeyDownStatus: false
         });
         engine.addScene(boardScene);
-        boardScene.addSprite(new Sprite(engine, 'pengo_2.png', 0, 'sprite_0').setPosition(100, 100));
+        const spriteName = engine.isRetinaDisplay() ? 'pengo_2.png x2' : 'pengo_2.png';
+        boardScene.addSprite(new Sprite(engine, spriteName, 0, 'sprite_0').setPosition(100, 100));
 
         // create score scene
         const scoreScene = new Scene(engine, 'score_scene');

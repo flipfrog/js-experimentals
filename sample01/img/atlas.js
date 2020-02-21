@@ -35,6 +35,15 @@ export default [
                 anchor: {x: 10, y: 10}
             },
             {
+                name: 'pengo_2.png x2',
+                x: 40,
+                y: 40,
+                width: 40,
+                height: 40,
+                rotate: 90,
+                anchor: {x: 20, y: 20}
+            },
+            {
                 name: 'partial_22.png',
                 x: 20,
                 y: 0,
