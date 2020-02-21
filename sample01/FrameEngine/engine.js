@@ -266,7 +266,7 @@ export default class FrameEngine {
             ctx.rotate((texture.rotate + rotate) * Math.PI / 180);
             ctx.drawImage(texture.image,
                 texture.x, texture.y, texture.width, texture.height,
-                -texture.anchor.x, -texture.anchor.y, texture.width, texture.height);
+                -texture.anchor.x * texture.width, -texture.anchor.y * texture.height, texture.width, texture.height);
             ctx.restore();
         }
     }
@@ -288,7 +288,7 @@ export default class FrameEngine {
             ctx.rotate((texture.rotate + rotate) * Math.PI / 180);
             ctx.drawImage(texture.canvasArray[index],
                 texture.x, texture.y, texture.width, texture.height,
-                -texture.anchor.x, -texture.anchor.y, texture.width, texture.height);
+                -texture.anchor.x * texture.width, -texture.anchor.y * texture.height, texture.width, texture.height);
             ctx.restore();
         }
     }

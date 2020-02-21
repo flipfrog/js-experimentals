@@ -9,7 +9,7 @@ export default [
                 width: 20,
                 height: 20,
                 rotate: 0,
-                anchor: {x: 10, y: 10}
+                anchor: {x: .5, y: .5}
             },
             {
                 name: 'pengo_1.5.png',
@@ -18,7 +18,7 @@ export default [
                 width: 20,
                 height: 20,
                 rotate: 0,
-                anchor: {x: 10, y: 10}
+                anchor: {x: .5, y: .5}
             }
         ]
     },
@@ -32,7 +32,7 @@ export default [
                 width: 20,
                 height: 20,
                 rotate: 90,
-                anchor: {x: 10, y: 10}
+                anchor: {x: .5, y: .5}
             },
             {
                 name: 'pengo_2.png x2',
@@ -41,7 +41,7 @@ export default [
                 width: 40,
                 height: 40,
                 rotate: 90,
-                anchor: {x: 20, y: 20}
+                anchor: {x: .5, y: .5}
             },
             {
                 name: 'partial_22.png',
@@ -50,7 +50,7 @@ export default [
                 width: 20,
                 height: 20,
                 rotate: 0,
-                anchor: {x: 10, y: 10}
+                anchor: {x: .5, y: .5}
             }
         ]
     },
@@ -64,7 +64,7 @@ export default [
                 width: 26,
                 height: 26,
                 rotate: 90,
-                anchor: {x: 10, y: 10},
+                anchor: {x: .5, y: .5},
                 intensityDecay: 10,
                 settleColor: [0, 0, 0],
             }
@@ -80,7 +80,7 @@ export default [
                 width: 50,
                 height: 51,
                 rotate: 0,
-                anchor: {x: 25, y: 25}
+                anchor: {x: .5, y: .5}
             }
         ]
     },
@@ -94,7 +94,7 @@ export default [
                 width: 400,
                 height: 200,
                 rotate: 0,
-                anchor: {x: 200, y: 100}
+                anchor: {x: .5, y: .5}
             }
         ]
     }
