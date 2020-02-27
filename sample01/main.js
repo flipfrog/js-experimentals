@@ -146,6 +146,8 @@ import atlas from './img/atlas.js';
     // process touch events to convert touch moves to arrow key-down statuses.
     const touchSenseThresholdX = 30;
     const touchSenseThresholdY = 30;
+    const touchSenseTrailingX = 40;
+    const touchSenseTrailingY = 40;
     const touchStatus = {
         isTouched: false,
         startX: null,
@@ -187,6 +189,15 @@ import atlas from './img/atlas.js';
                         // moved up
                         data.arrowKeyDownStatuses[engine.KEY_SYMBOL_UP] = true;
                     }
+                }
+                // adjust start positions to improve UI
+                if (Math.abs(diffX) > touchSenseTrailingX) {
+                    const delta = touchSenseTrailingX - touchSenseThresholdX;
+                    touchStatus.startX += (diffX < 0 ? delta : -delta);
+                }
+                if (Math.abs(diffY) > touchSenseTrailingY) {
+                    const delta = touchSenseTrailingY - touchSenseThresholdY;
+                    touchStatus.startY += (diffY < 0 ? delta : -delta);
                 }
                 break;
             case engine.EVENT_TYPE_TOUCHEND:
