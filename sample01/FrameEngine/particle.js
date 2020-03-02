@@ -15,7 +15,7 @@ class ParticleSystemBase {
             angularVelocity: 0, // deg/sec for sprite rotation
         };
         Object.keys(this.options).forEach(key => {
-            this.options[key] = (options[key] ? options[key] : this.options[key]);
+            this.options[key] = (options[key] !== undefined ? options[key] : this.options[key]);
         });
         [this.cx, this.cy, this.textureName] = [cx, cy, textureName];
     }
@@ -49,6 +49,34 @@ export class ParticleSystemExplosion extends ParticleSystemBase {
         for (let i = 0; i < this.options.numInitialTextures; i++) {
             const texture = new ParticleExplosion(this.cx, this.cy, this.textureName);
             this.textures.push(texture);
+        }
+    }
+}
+
+/**
+ * fire particle system class
+ */
+export class ParticleSystemFire extends ParticleSystemBase {
+    constructor(cx, cy, textureName, options={}) {
+        super(cx, cy, textureName, options);
+        this.options.numInitialTextures = 15;
+        for (let i = 0; i < this.options.numInitialTextures; i++) {
+            const texture = new ParticleFire(this.cx, this.cy, this.textureName);
+            this.textures.push(texture);
+        }
+        this.t = 0;
+    }
+    updateAndDraw(engine, delta) {
+        super.updateAndDraw(engine, delta);
+        this.t += delta;
+        if (this.t > 0.1) {
+            const generateCount = this.t / 0.1 * 10;
+            this.inProgress = true;
+            this.t = 0;
+            for (let i = 0; i < generateCount; i++) {
+                const texture = new ParticleFire(this.cx, this.cy, this.textureName);
+                this.textures.push(texture);
+            }
         }
     }
 }
@@ -96,6 +124,34 @@ class ParticleExplosion extends ParticleBase {
     updateCoordinate(delta) {
         super.updateCoordinate(delta);
         const velocityMultiplyValue = 1/(1 - Math.pow(Math.E, this.t));
+        this.vx = this.initialVx * velocityMultiplyValue;
+        this.vy = this.initialVy * velocityMultiplyValue;
+        this.x += (this.vx * delta);
+        this.y += (this.vy * delta);
+        this.rotate += (this.vr * delta);
+    }
+
+}
+
+/**
+ * fire particle class
+ */
+class ParticleFire extends ParticleBase {
+    constructor(cx, cy, textureName) {
+        super(cx, cy, textureName);
+        // compose texture velocities of fix and elastic part
+        const baseVx = Math.cos(Math.random() * Math.PI / 2) * this.baseVelocity;
+        const baseVy = Math.sin(Math.random() * Math.PI / 2) * this.baseVelocity;
+        const fixedVelocitySegment = this.fixedVelocityRatio;
+        const elasticVelocitySegment = (1 - this.fixedVelocityRatio);
+        const vx = baseVx * (fixedVelocitySegment + elasticVelocitySegment * Math.random());
+        const vy = baseVy * (fixedVelocitySegment + elasticVelocitySegment * Math.random());
+        [this.initialVx, this.initialVy] = [vx, vy];
+    }
+
+    updateCoordinate(delta) {
+        super.updateCoordinate(delta);
+        const velocityMultiplyValue = 1 / (1 - Math.pow(Math.E, this.t));
         this.vx = this.initialVx * velocityMultiplyValue;
         this.vy = this.initialVy * velocityMultiplyValue;
         this.x += (this.vx * delta);

@@ -1,5 +1,5 @@
 import FrameEngine, {Scene, Sprite} from "./FrameEngine/engine.js";
-import {ParticleSystemExplosion} from './FrameEngine/particle.js';
+import {ParticleSystemFire} from './FrameEngine/particle.js';
 import {TransitionSwipe} from './FrameEngine/transition.js';
 import {UIButton} from './FrameEngine/ui.js';
 import atlas from './img/atlas.js';
@@ -131,7 +131,6 @@ import atlas from './img/atlas.js';
         const rect = e.target.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        /*
         const sprite = scene.getSprite('sprite_100_100');
         if (sprite) {
             sprite.setPosition(x, y, sprite.rotate);
@@ -139,8 +138,7 @@ import atlas from './img/atlas.js';
         if (scene.getSprite('sprite_150_100')) {
             scene.removeSprite('sprite_150_100');
         }
-        scene.addParticle(new ExplosionParticleSystem(x, y, 'particle_tex_1.png'));
-         */
+        scene.addParticle(new ParticleSystemFire(x, y, 'particle_tex_1.png'));
     }
 
     // process touch events to convert touch moves to arrow key-down statuses.
