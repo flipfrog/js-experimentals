@@ -22,7 +22,7 @@ class ParticleSystemBase {
     // update textures
     updateAndDraw(engine, delta) {
         this.textures = this.textures.filter(texture => {
-            return this.options.duration === 0 || texture.t < this.options.duration;
+            return this.options.duration === 0 || texture.t < texture.duration;
         });
         this.inProgress = (this.textures.length > 0);
         if (this.inProgress) {
@@ -32,7 +32,7 @@ class ParticleSystemBase {
             ctx.save();
             ctx.globalCompositeOperation = 'lighter'; // set blend mode
             this.textures.forEach(texture => {
-                const index = Math.min(Math.floor((texture.t/this.options.duration)*canvasArrayMaxIndex), canvasArrayMaxIndex);
+                const index = Math.min(Math.floor((texture.t/texture.duration)*canvasArrayMaxIndex), canvasArrayMaxIndex);
                 texture.draw(engine, index);
             });
             ctx.restore();
@@ -59,9 +59,13 @@ export class ParticleSystemExplosion extends ParticleSystemBase {
 export class ParticleSystemFire extends ParticleSystemBase {
     constructor(cx, cy, textureName, options={}) {
         super(cx, cy, textureName, options);
-        this.options.numInitialTextures = 15;
+        this.options.numInitialTextures = 100;
+        this.particleOptions = {
+            durationTime: 3,
+            durationFixed: 0.5
+        };
         for (let i = 0; i < this.options.numInitialTextures; i++) {
-            const texture = new ParticleFire(this.cx, this.cy, this.textureName);
+            const texture = new ParticleFire(this.cx, this.cy, this.textureName, this.particleOptions);
             this.textures.push(texture);
         }
         this.t = 0;
@@ -69,12 +73,13 @@ export class ParticleSystemFire extends ParticleSystemBase {
     updateAndDraw(engine, delta) {
         super.updateAndDraw(engine, delta);
         this.t += delta;
-        if (this.t > 0.1) {
-            const generateCount = this.t / 0.1 * 10;
+        const lackOfTextures = this.options.numInitialTextures - this.textures.length;
+        const generationCount = lackOfTextures > 0 ? lackOfTextures : 0;
+        if (generationCount > 0) {
             this.inProgress = true;
             this.t = 0;
-            for (let i = 0; i < generateCount; i++) {
-                const texture = new ParticleFire(this.cx, this.cy, this.textureName);
+            for (let i = 0; i < generationCount; i++) {
+                const texture = new ParticleFire(this.cx, this.cy, this.textureName, this.particleOptions);
                 this.textures.push(texture);
             }
         }
@@ -85,7 +90,7 @@ export class ParticleSystemFire extends ParticleSystemBase {
  * particle base class
  */
 class ParticleBase {
-    constructor(cx, cy, textureName) {
+    constructor(cx, cy, textureName, options={}) {
         this.t = 0;
         this.initialVx = 0; // px/sec
         this.initialVy = 0; // px/sec
@@ -95,7 +100,13 @@ class ParticleBase {
         this.vr = 0; // deg/sec
         this.baseVelocity = 10; // px/sec
         this.fixedVelocityRatio = .5;
+        this.options = {
+            durationTime: 1,
+            durationFixed: 0.5
+        };
         [this.x, this.y, this.textureName] = [cx, cy, textureName];
+        Object.keys(options).forEach(key => (this.options[key] = (options[key] !== undefined ? options[key] : this.options[key])));
+        this.duration = Math.random() * (this.options.durationTime - this.options.durationFixed) + this.options.durationFixed;
     }
     updateCoordinate(delta) {
         this.t += delta;
@@ -110,8 +121,8 @@ class ParticleBase {
  * explosion particle class
  */
 class ParticleExplosion extends ParticleBase {
-    constructor(cx, cy, textureName) {
-        super(cx, cy, textureName);
+    constructor(cx, cy, textureName, options) {
+        super(cx, cy, textureName, options);
         // compose texture velocities of fix and elastic part
         const baseVx = Math.cos(Math.random() * Math.PI * 2) * this.baseVelocity;
         const baseVy = Math.sin(Math.random() * Math.PI * 2) * this.baseVelocity;
@@ -137,11 +148,11 @@ class ParticleExplosion extends ParticleBase {
  * fire particle class
  */
 class ParticleFire extends ParticleBase {
-    constructor(cx, cy, textureName) {
-        super(cx, cy, textureName);
+    constructor(cx, cy, textureName, options) {
+        super(cx, cy, textureName, options);
         // compose texture velocities of fix and elastic part
-        const baseVx = Math.cos(Math.random() * Math.PI / 2) * this.baseVelocity;
-        const baseVy = Math.sin(Math.random() * Math.PI / 2) * this.baseVelocity;
+        const baseVx = Math.cos(Math.random() * Math.PI / 2 + Math.PI/4) * this.baseVelocity;
+        const baseVy = Math.sin(Math.random() * Math.PI / 2 + Math.PI/4) * this.baseVelocity;
         const fixedVelocitySegment = this.fixedVelocityRatio;
         const elasticVelocitySegment = (1 - this.fixedVelocityRatio);
         const vx = baseVx * (fixedVelocitySegment + elasticVelocitySegment * Math.random());
@@ -151,7 +162,7 @@ class ParticleFire extends ParticleBase {
 
     updateCoordinate(delta) {
         super.updateCoordinate(delta);
-        const velocityMultiplyValue = 1 / (1 - Math.pow(Math.E, this.t));
+        const velocityMultiplyValue = 1 / (1 - Math.pow(Math.E, this.t/2));
         this.vx = this.initialVx * velocityMultiplyValue;
         this.vy = this.initialVy * velocityMultiplyValue;
         this.x += (this.vx * delta);
