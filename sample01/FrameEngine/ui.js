@@ -89,8 +89,8 @@ export class UIButton extends UIBase {
             this.ctx.fillRect(this.geometry.x, this.geometry.y, this.geometry.width, this.geometry.height);
             this.ctx.fillStyle = this.textFillStyle;
             this.ctx.fillText(this.text, this.geometry.x, this.geometry.y+this.geometry.height);
-            this.ctx.restore();
         }
+        this.ctx.restore();
     }
     setText(text) {
         this.text = text;
