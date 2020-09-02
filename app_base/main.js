@@ -16,7 +16,7 @@ import {Board} from './board.js';
         const [centerX, centerY] = [engine.getCanvas().width/2, engine.getCanvas().height/2];
 
         // create title scene
-        const titleScene = new Scene(engine);
+        const titleScene = new Scene(engine, 'title_scene');
         //titleScene.updateHandler = (engine, scene, delta) => {};
         const startButton = new UIButton(engine, centerX, centerY+100, null);
         startButton.setImage('start_button_1.png');
@@ -30,7 +30,7 @@ import {Board} from './board.js';
         titleScene.addSprite(new Sprite(engine, 'title.png', 0, 'title').setPosition(centerX, centerY-50)); // FIXME: same up.
 
         // create board scene
-        const boardScene = new Scene(engine);
+        const boardScene = new Scene(engine, 'board_scene');
         boardScene.updateHandler = updateBoardScene;
         boardScene.eventListener = sharedEventListener;
         boardScene.setClientData({

@@ -157,9 +157,12 @@ export default class FrameEngine {
                     this.transition = transitionObj;
                     this.requestedSceneIndex = index;
                 } else {
+                    this.scenes[this.currentSceneIndex].beforeLeaveHandler(this, this.scenes[this.currentSceneIndex]);
+                    this.scenes[index].beforeEnterHandler(this, this.scenes[index]);
                     this.currentSceneIndex = index;
                 }
             } else {
+                this.scenes[index].beforeEnterHandler(this, this.scenes[index]);
                 this.currentSceneIndex = index;
             }
         }
@@ -343,6 +346,9 @@ export default class FrameEngine {
         } else {
             // draw transition
             if (this.transition.draw(this, delta)) {
+                // change scene control
+                this.scenes[this.currentSceneIndex].beforeLeaveHandler(this, this.scenes[this.currentSceneIndex]);
+                this.scenes[this.requestedSceneIndex].beforeEnterHandler(this, this.scenes[this.requestedSceneIndex]);
                 this.currentSceneIndex = this.requestedSceneIndex;
                 this.requestedSceneIndex = null;
                 this.transition = null;
@@ -458,6 +464,9 @@ export class Scene {
         this.eventListener = function (engine, scene, e) {};
         // frame update handler
         this.updateHandler = function (engine, scene, delta) {};
+        // will be called when scene is about to change(active)
+        this.beforeEnterHandler = function (engine, scene) {};
+        this.beforeLeaveHandler = function (engine, scene) {};
     }
     /**
      * set client data
