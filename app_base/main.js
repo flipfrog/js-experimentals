@@ -1,77 +1,48 @@
-import FrameEngine, {Scene, Sprite} from "./FrameEngine/engine.js";
+import FrameEngine from "./FrameEngine/engine.js";
 import {ParticleSystemFire} from './FrameEngine/particle.js';
-import {TransitionSwipe} from './FrameEngine/transition.js';
-import {UIButton, UILabel} from './FrameEngine/ui.js';
 import atlas from './img/atlas.js';
 import {BoardScene} from './BoardScene.js';
+import {TitleScene} from './TitleScene.js';
+import {ScoreScene} from "./ScoreScene.js";
 
 (function(){
-    let board = null;
     // create engines on each canvas
     [1, 2].forEach(index => {
         // create frame rendering engine
         const engine = new FrameEngine();
         engine.setCanvas('canvas_'+index, (index === 1));
         engine.setDisplayFps(true);
-        const [centerX, centerY] = [engine.getCanvas().width/2, engine.getCanvas().height/2];
 
-        // create title scene
-        const titleScene = new Scene(engine, 'title_scene');
-        //titleScene.updateHandler = (engine, scene, delta) => {};
-        const startButton = new UIButton(engine, centerX, centerY+100, null);
-        startButton.setImage('start_button_1.png');
-        startButton.setFont('serif', 48); // FIXME: should do construct screens after loading resources.
-        titleScene.addUIObject(startButton);
-        startButton.setEventListener((engine, scene, e) => {
-            engine.changeScene(boardScene.index, new TransitionSwipe());
-        });
-        engine.addScene(titleScene);
-        titleScene.addSprite(new Sprite(engine, 'title.png', 0, 'title').setPosition(centerX, centerY-50)); // FIXME: same up.
-
-        // create board scene
-        const boardScene = new BoardScene(engine, 'board_scene');
-        boardScene.eventListener = sharedEventListener;
-        boardScene.setClientData({
-            pps: 20,
-            arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
-            spaceKeyDownStatus: false
-        });
-        engine.addScene(boardScene);
-
-        // create score scene
-        const scoreScene = new Scene(engine, 'score_scene');
-        scoreScene.updateHandler = updateScoreScene;
-        const gotoTitleButton = new UIButton(engine, centerX, centerY+150, null);
-        gotoTitleButton.setImage('go_title.png');
-        scoreScene.addUIObject(gotoTitleButton);
-        const scoreTitle = new UILabel(engine, centerX, 60, 'YOUR SCORES');
-        scoreTitle.setFont("'Ricty Diminished', 'Monaco', 'Consolas', 'Courier New', Courier, monospace, sans-serif", 45);
-        scoreScene.addUIObject(scoreTitle);
-        Array.from({length: 5}).map((v, i) => {
-            const prefixes = ['st', 'nd'];
-            const scoreLine = new UILabel(engine, centerX, 140 + 50 * i, `${i+1}${prefixes[i] || 'th'} ... 00000`); // TODO: apply latest scores
-            scoreLine.setFont("'Ricty Diminished', 'Monaco', 'Consolas', 'Courier New', Courier, monospace, sans-serif", 40);
-            scoreLine.setTag(`scoreLabel${i}`);
-            scoreScene.addUIObject(scoreLine);
-        });
-        engine.addScene(scoreScene);
-        gotoTitleButton.setEventListener((engine, scene, e) => engine.changeScene(titleScene.index, new TransitionSwipe()));
-
-        // change to the title scene
-        engine.changeScene(titleScene.index);
-
-        // load sprite textures then start frame rendering
-        //engine.loadTextureAtlas('../img/atlas.js')
+        // load texture atlas then start frame
         engine.loadTextureAtlas(atlas)
-            .then(() => engine.startFrame());
+            .then(() => {
+                // create title scene
+                const titleScene = new TitleScene(engine, 'title_scene');
+                engine.addScene(titleScene);
+
+                // create board scene
+                const boardScene = new BoardScene(engine, 'board_scene');
+                boardScene.eventListener = sharedEventListener;
+                boardScene.setClientData({
+                    pps: 20, // move sprites 20 pixels par second
+                    arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
+                    spaceKeyDownStatus: false
+                });
+                engine.addScene(boardScene);
+
+                // create score scene
+                const scoreScene = new ScoreScene(engine, 'score_scene');
+                engine.addScene(scoreScene);
+
+                // change to the title scene
+                engine.changeSceneByTag('title_scene');
+
+                // start frame
+                engine.startFrame();
+            });
     });
 
-
-    function updateScoreScene(engine, scene, delta) {
-        
-    }
-
-    // event listener
+    // event listener (common on all scenes)
     function sharedEventListener(engine, scene, e) {
         switch (e.type) {
             case engine.EVENT_TYPE_KEYDOWN:
