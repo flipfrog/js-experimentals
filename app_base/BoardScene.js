@@ -1,5 +1,6 @@
 import {Sprite, Scene} from "./FrameEngine/engine.js";
 import {TransitionSwipe} from "./FrameEngine/transition.js";
+import {SCENE_TAG_SCORE} from './Constants.js';
 
 export class BoardScene extends Scene{
     boardState = 0;
@@ -20,7 +21,7 @@ export class BoardScene extends Scene{
         const shouldContinueScene = this.updateBoardSceneIn(engine, scene, delta, this.elapsedTime);
         if(!shouldContinueScene && engine.requestedSceneIndex === null) {
             console.log('*** change scene to next.');
-            engine.changeSceneByTag('score_scene', new TransitionSwipe());
+            engine.changeSceneByTag(SCENE_TAG_SCORE, new TransitionSwipe());
         }
     }
     updateBoardSceneIn(engine, scene, delta, elapsedTime) {

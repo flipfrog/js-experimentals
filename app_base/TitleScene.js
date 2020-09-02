@@ -1,6 +1,7 @@
 import {Scene, Sprite} from "./FrameEngine/engine.js";
 import {UIButton} from "./FrameEngine/ui.js";
 import {TransitionSwipe} from "./FrameEngine/transition.js";
+import {SCENE_TAG_BOARD} from './Constants.js';
 
 export class TitleScene extends Scene {
     constructor(engine, tagName=null) {
@@ -11,7 +12,7 @@ export class TitleScene extends Scene {
         startButton.setFont('serif', 48);
         this.addUIObject(startButton);
         startButton.setEventListener((engine, scene, e) => {
-            engine.changeSceneByTag('board_scene', new TransitionSwipe());
+            engine.changeSceneByTag(SCENE_TAG_BOARD, new TransitionSwipe());
         });
         this.addSprite(new Sprite(engine, 'title.png', 0, 'title').setPosition(centerX, centerY-50));
     }

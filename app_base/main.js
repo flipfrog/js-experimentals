@@ -4,6 +4,7 @@ import atlas from './img/atlas.js';
 import {BoardScene} from './BoardScene.js';
 import {TitleScene} from './TitleScene.js';
 import {ScoreScene} from "./ScoreScene.js";
+import {SCENE_TAG_TITLE, SCENE_TAG_BOARD, SCENE_TAG_SCORE} from './Constants.js';
 
 (function(){
     // create engines on each canvas
@@ -20,11 +21,11 @@ import {ScoreScene} from "./ScoreScene.js";
         engine.loadTextureAtlas(atlas)
             .then(() => {
                 // create title scene
-                const titleScene = new TitleScene(engine, 'title_scene');
+                const titleScene = new TitleScene(engine, SCENE_TAG_TITLE);
                 engine.addScene(titleScene);
 
                 // create board scene
-                const boardScene = new BoardScene(engine, 'board_scene');
+                const boardScene = new BoardScene(engine, SCENE_TAG_BOARD);
                 boardScene.eventListener = sharedEventListener;
                 boardScene.setClientData({
                     pps: 20, // move sprites 20 pixels par second
@@ -34,11 +35,11 @@ import {ScoreScene} from "./ScoreScene.js";
                 engine.addScene(boardScene);
 
                 // create score scene
-                const scoreScene = new ScoreScene(engine, 'score_scene');
+                const scoreScene = new ScoreScene(engine, SCENE_TAG_SCORE);
                 engine.addScene(scoreScene);
 
                 // change to the title scene
-                engine.changeSceneByTag('title_scene');
+                engine.changeSceneByTag(SCENE_TAG_TITLE);
 
                 // start frame
                 engine.startFrame();

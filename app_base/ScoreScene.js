@@ -1,6 +1,7 @@
 import {Scene} from "./FrameEngine/engine.js";
 import {UIButton, UILabel} from "./FrameEngine/ui.js";
 import {TransitionSwipe} from "./FrameEngine/transition.js";
+import {SCENE_TAG_TITLE} from './Constants.js';
 
 export class ScoreScene extends Scene {
     constructor(engine, tagName=null) {
@@ -21,6 +22,6 @@ export class ScoreScene extends Scene {
             scoreLine.setTag(`scoreLabel${i}`);
             this.addUIObject(scoreLine);
         });
-        gotoTitleButton.setEventListener((engine, scene, e) => engine.changeSceneByTag('title_scene', new TransitionSwipe()));
+        gotoTitleButton.setEventListener((engine, scene, e) => engine.changeSceneByTag(SCENE_TAG_TITLE, new TransitionSwipe()));
     }
 }
