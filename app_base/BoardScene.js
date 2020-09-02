@@ -1,10 +1,29 @@
-import {Sprite} from "./FrameEngine/engine.js";
+import {Sprite, Scene} from "./FrameEngine/engine.js";
+import {TransitionSwipe} from "./FrameEngine/transition.js";
 
-export class Board {
+export class BoardScene extends Scene{
     boardState = 0;
     readySprite = null;
     elapsedTimes = {};
-    updateBoardScene(engine, scene, delta, elapsedTime) {
+    constructor(engine, tagName=null) {
+        super(engine, tagName);
+        this.updateHandler = this.updateBoardScene;
+        const spriteName = engine.isRetinaDisplay() ? 'pengo_2.png x2' : 'pengo_2.png';
+        this.addSprite(new Sprite(engine, spriteName, 0, 'sprite_0').setPosition(100, 100));
+        this.beforeEnterHandler = () => this.boardState = 0;
+        this.beforeLeaveHandler = () => this.removeAllParticles();
+    }
+    
+    // update canvas
+    updateBoardScene(engine, scene, delta) {
+        this.elapsedTime += delta;
+        const shouldContinueScene = this.updateBoardSceneIn(engine, scene, delta, this.elapsedTime);
+        if(!shouldContinueScene && engine.requestedSceneIndex === null) {
+            console.log('*** change scene to next.');
+            engine.changeSceneByTag('score_scene', new TransitionSwipe());
+        }
+    }
+    updateBoardSceneIn(engine, scene, delta, elapsedTime) {
         const canvas = engine.getCanvas();
         const data = scene.getClientData();
         const sprite = scene.getSprite('sprite_0');

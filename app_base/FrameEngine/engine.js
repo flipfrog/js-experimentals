@@ -535,6 +535,12 @@ export class Scene {
         this.particles.push(particle);
     }
     /**
+     * remove all particles
+     */
+    removeAllParticles() {
+        this.particles = [];
+    }
+    /**
      * update and filter particle systems
      * @param delta
      */

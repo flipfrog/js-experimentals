@@ -3,7 +3,7 @@ import {ParticleSystemFire} from './FrameEngine/particle.js';
 import {TransitionSwipe} from './FrameEngine/transition.js';
 import {UIButton, UILabel} from './FrameEngine/ui.js';
 import atlas from './img/atlas.js';
-import {Board} from './board.js';
+import {BoardScene} from './BoardScene.js';
 
 (function(){
     let board = null;
@@ -23,15 +23,13 @@ import {Board} from './board.js';
         startButton.setFont('serif', 48); // FIXME: should do construct screens after loading resources.
         titleScene.addUIObject(startButton);
         startButton.setEventListener((engine, scene, e) => {
-            board = new Board(); // create game board class
             engine.changeScene(boardScene.index, new TransitionSwipe());
         });
         engine.addScene(titleScene);
         titleScene.addSprite(new Sprite(engine, 'title.png', 0, 'title').setPosition(centerX, centerY-50)); // FIXME: same up.
 
         // create board scene
-        const boardScene = new Scene(engine, 'board_scene');
-        boardScene.updateHandler = updateBoardScene;
+        const boardScene = new BoardScene(engine, 'board_scene');
         boardScene.eventListener = sharedEventListener;
         boardScene.setClientData({
             pps: 20,
@@ -39,8 +37,6 @@ import {Board} from './board.js';
             spaceKeyDownStatus: false
         });
         engine.addScene(boardScene);
-        const spriteName = engine.isRetinaDisplay() ? 'pengo_2.png x2' : 'pengo_2.png';
-        boardScene.addSprite(new Sprite(engine, spriteName, 0, 'sprite_0').setPosition(100, 100));
 
         // create score scene
         const scoreScene = new Scene(engine, 'score_scene');
@@ -70,23 +66,6 @@ import {Board} from './board.js';
             .then(() => engine.startFrame());
     });
 
-    // update canvas
-    let elapsedTime = 0;
-    const STAY_SEC = 3;
-    function updateBoardScene(engine, scene, delta) {
-        elapsedTime += delta;
-        if (elapsedTime > STAY_SEC) {
-            //engine.changeSceneByTag('score_scene', new TransitionSwipe());
-            //elapsedTime = 0;
-            //return;
-        }
-        const shouldContinueScene = board.updateBoardScene(engine, scene, delta, elapsedTime);
-        if(!shouldContinueScene && engine.requestedSceneIndex === null) {
-            console.log('*** change scene to next.');
-            engine.changeSceneByTag('score_scene', new TransitionSwipe());
-            //elapsedTime = 0;
-        }
-    }
 
     function updateScoreScene(engine, scene, delta) {
         
