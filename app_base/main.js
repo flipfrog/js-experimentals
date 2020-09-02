@@ -12,6 +12,9 @@ import {ScoreScene} from "./ScoreScene.js";
         const engine = new FrameEngine();
         engine.setCanvas('canvas_'+index, (index === 1));
         engine.setDisplayFps(true);
+        engine.setClientData({
+            scores: [100, 200, 300, 400, 500],
+        });
 
         // load texture atlas then start frame
         engine.loadTextureAtlas(atlas)
