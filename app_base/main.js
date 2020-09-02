@@ -11,6 +11,7 @@ import {SCENE_TAG_TITLE, SCENE_TAG_BOARD, SCENE_TAG_SCORE} from './Constants.js'
     [1, 2].forEach(index => {
         // create frame rendering engine
         const engine = new FrameEngine();
+        const canvasId = 'canvas_'+index;
         engine.setCanvas('canvas_'+index, (index === 1));
         engine.setDisplayFps(true);
         engine.setClientData({
@@ -22,6 +23,11 @@ import {SCENE_TAG_TITLE, SCENE_TAG_BOARD, SCENE_TAG_SCORE} from './Constants.js'
             .then(() => {
                 // create title scene
                 const titleScene = new TitleScene(engine, SCENE_TAG_TITLE);
+                titleScene.eventListener = sharedEventListener;
+                titleScene.setClientData({
+                    arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
+                    spaceKeyDownStatus: false
+                });
                 engine.addScene(titleScene);
 
                 // create board scene
@@ -30,7 +36,8 @@ import {SCENE_TAG_TITLE, SCENE_TAG_BOARD, SCENE_TAG_SCORE} from './Constants.js'
                 boardScene.setClientData({
                     pps: 20, // move sprites 20 pixels par second
                     arrowKeyDownStatuses: {ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false},
-                    spaceKeyDownStatus: false
+                    spaceKeyDownStatus: false,
+                    enterKeyDownStatus: false,
                 });
                 engine.addScene(boardScene);
 
@@ -44,6 +51,10 @@ import {SCENE_TAG_TITLE, SCENE_TAG_BOARD, SCENE_TAG_SCORE} from './Constants.js'
                 // start frame
                 engine.startFrame();
             });
+        if (index === 1) {
+            const element = document.getElementById(canvasId);
+            element.focus();
+        }
     });
 
     // event listener (common on all scenes)
@@ -77,6 +88,10 @@ import {SCENE_TAG_TITLE, SCENE_TAG_BOARD, SCENE_TAG_SCORE} from './Constants.js'
         // check space key
         if (eventKey === engine.KEY_SYMBOL_SPACE) {
             data.spaceKeyDownStatus = (eventType === engine.EVENT_TYPE_KEYDOWN);
+        }
+        // check enter key
+        if (eventKey === engine.KEY_SYMBOL_ENTER) {
+            data.enterKeyDownStatus = (eventType === engine.EVENT_TYPE_KEYDOWN);
         }
         scene.setClientData(data);
     }

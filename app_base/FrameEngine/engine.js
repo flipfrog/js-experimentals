@@ -13,7 +13,8 @@ export default class FrameEngine {
         this.KEY_SYMBOL_RIGHT = 'ArrowRight';
         this.KEY_SYMBOL_UP = 'ArrowUp';
         this.KEY_SYMBOL_DOWN = 'ArrowDown';
-        this.KEY_SYMBOL_SPACE = 'Space';
+        this.KEY_SYMBOL_SPACE = ' ';
+        this.KEY_SYMBOL_ENTER = 'Enter';
 
         // display fps
         this.displayFps = false;

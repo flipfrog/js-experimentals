@@ -15,5 +15,12 @@ export class TitleScene extends Scene {
             engine.changeSceneByTag(SCENE_TAG_BOARD, new TransitionSwipe());
         });
         this.addSprite(new Sprite(engine, 'title.png', 0, 'title').setPosition(centerX, centerY-50));
-    }
+        this.updateHandler = (engine) => {
+            const clientData = this.getClientData();
+            if (clientData.spaceKeyDownStatus || clientData.enterKeyDownStatus) {
+                engine.changeSceneByTag(SCENE_TAG_BOARD, new TransitionSwipe());
+            }
+        }
+    };
+    
 }
